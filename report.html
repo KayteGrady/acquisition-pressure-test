@@ -33,7 +33,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;color:#0B1D3A;background:#f0f2f6
 .cost-box{border-radius:9px;padding:14px 16px;margin-bottom:16px;}
 .cost-label{font-size:8.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px;}
 .cost-list{list-style:none;}
-.cost-item{font-size:12px;color:#5C6E84;line-height:1.5;padding-left:14px;position:relative;margin-bottom:6px;}
+.cost-item{font-size:12px;color:#5C6E84;line-height:1.5;padding-left:16px;position:relative;margin-bottom:6px;list-style:none;}
 .cost-item::before{content:'';position:absolute;left:0;top:6px;width:5px;height:5px;border-radius:50%;display:block;}
 .actions-label{font-size:8.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#9AAABB;margin-bottom:10px;margin-top:16px;}
 .action-row{display:flex;align-items:flex-start;gap:12px;margin-bottom:10px;}
@@ -129,7 +129,7 @@ function renderReport(p){
   const td=mkDots(true,300),bd=mkDots(false,260);
 
   function costItems(bullets,color){
-    return bullets.map(b=>`<li class="cost-item" style="color:#5C6E84;"><span class="cost-item" style="position:absolute;left:0;top:6px;width:5px;height:5px;border-radius:50%;background:${color};display:block;"></span>${b}</li>`).join('');
+    return bullets.map(b=>`<li class="cost-item"><span style="position:absolute;left:0;top:6px;width:5px;height:5px;border-radius:50%;background:${color};display:block;"></span>${b}</li>`).join('');
   }
   function actionRows(actions,color){
     return actions.map((a,i)=>`<div class="action-row"><div class="action-num" style="background:${color};">${i+1}</div><div class="action-text">${a}</div></div>`).join('');
