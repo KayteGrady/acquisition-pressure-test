@@ -22,13 +22,13 @@ body{font-family:var(--font);background:#fff;color:var(--navy);overflow-x:hidden
 .a0{animation:fadeUp .7s ease both}.a1{animation:fadeUp .7s .2s ease both}.a2{animation:fadeUp .7s .4s ease both}.a3{animation:fadeUp .7s .6s ease both}.a4{animation:fadeUp .7s .8s ease both}
 .cursor-script{display:inline-block;width:1.5px;height:.8em;background:var(--navy);vertical-align:text-bottom;margin-left:1px;animation:blink .8s step-end infinite;opacity:.35;}
 #landing{background:#fff;align-items:stretch;position:relative;overflow:hidden;}
-.landing-body{flex:1;display:flex;align-items:flex-start;justify-content:center;padding:7rem 2rem 6rem;}
+.landing-body{flex:1;display:flex;align-items:center;justify-content:center;padding:2rem 2rem 6rem;}
 .landing-inner{max-width:1340px;width:100%;text-align:center;padding:0 25px;}
 .landing-headline{font-family:var(--font);font-size:clamp(2.8rem,6.5vw,4.2rem);font-weight:700;line-height:1.05;color:var(--navy);margin-bottom:1.35rem;letter-spacing:-0.03em;}
 .landing-headline .blue{color:var(--bc-blue);}
 .leak-wrap{display:inline-block;font-family:var(--script);font-style:italic;font-weight:600;font-size:1.12em;letter-spacing:-0.01em;cursor:default;overflow:visible;}
 .leak-letter{display:inline-block;transform:translateY(0);opacity:1;}
-.landing-sub{font-size:1rem;color:var(--text-secondary);line-height:1.75;margin-bottom:2rem;max-width:800px;margin-left:auto;margin-right:auto;white-space:nowrap;}
+.landing-sub{font-size:1.2rem;color:var(--text-secondary);line-height:1.75;margin-bottom:2rem;max-width:800px;margin-left:auto;margin-right:auto;white-space:nowrap;}
 .divider{height:1px;background:rgba(11,29,58,0.1);max-width:320px;margin:0 auto 2rem;transform-origin:left;animation:drawLine .8s ease 1.4s both;}
 .cta-btn{display:inline-flex;align-items:center;gap:10px;background:var(--bc-blue);color:#fff;border:none;border-radius:12px;padding:1rem 2.5rem;font-family:var(--font);font-size:.975rem;font-weight:600;cursor:pointer;transition:transform .25s ease,box-shadow .25s ease;}
 .cta-btn:hover{transform:translateY(-3px);box-shadow:0 12px 32px rgba(1,95,255,.24);}
@@ -172,7 +172,7 @@ body{font-family:var(--font);background:#fff;color:var(--navy);overflow-x:hidden
   <canvas class="dot-canvas" id="landing-canvas"></canvas>
   <div class="landing-body"><div class="landing-inner">
     <h1 class="landing-headline a0">Your ad spend<br>has a <span class="leak-wrap" id="leak-wrap"></span><br><span class="blue">Find it.</span></h1>
-    <p class="landing-sub a1">A quick, no-BS diagnosis of where your acquisition spend is leaking, & how to stop it.</p>
+    <p class="landing-sub a1">A quick, no-BS diagnosis of where your acquisition spend is leaking, and how to stop it.</p>
     <div class="divider a2"></div>
     <div class="a3">
       <button class="cta-btn" onclick="startQuiz()">Run my diagnosis <span class="arrow">→</span></button>
