@@ -316,7 +316,7 @@ function getPatternKey(ans){
   return'P01';
 }
 
-function getUTMs(){const p=new URLSearchParams(window.location.search);return{utm_source:p.get('utm_source')||'',utm_medium:p.get('utm_medium')||'',utm_campaign:p.get('utm_campaign')||'',utm_content:p.get('utm_content')||''};}
+function getUTMs(){const p=new URLSearchParams(window.location.search);return{utm_source:p.get('utm_source')||'',utm_medium:p.get('utm_medium')||'',utm_campaign:p.get('utm_campaign')||'',utm_content:p.get('utm_content')||'',gclid:p.get('gclid')||''};}
 function buildResultsURL(a){return'https://www.blueconic.com/tools/acquisition-pressure-test-report?r='+a.map(n=>n+1).join('');}
 
 function checkResultsURL(){
@@ -517,7 +517,12 @@ document.addEventListener('DOMContentLoaded',()=>{
           'Acq_Pressure_Test_Intent_and_Recovery__c':labels[2]||'',
           'Acq_Pressure_Test_Abandonment_Speed__c':labels[3]||'',
           'Acq_Pressure_Test_Basket_Growth__c':labels[4]||'',
-          'Acq_Pressure_Test_Results_URL__c':window._resultsURL||''
+          'Acq_Pressure_Test_Results_URL__c':window._resultsURL||'',
+          'uTMSource':window._utms.utm_source||'',
+          'uTMMedium':window._utms.utm_medium||'',
+          'uTMCampaign':window._utms.utm_campaign||'',
+          'uTMContent':window._utms.utm_content||'',
+          'gCLID':window._utms.gclid||''
         });
       });
       form.onSuccess(function(){
