@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Acquisition Pressure Test — BlueConic</title>
+<!-- Marketo loaded in head so MktoForms2 is defined before modal fires -->
+<script src="//more.blueconic.com/js/forms2/js/forms2.min.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Cormorant+Garamond:ital,wght@1,400;1,600&display=swap');
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{--navy:#0B1D3A;--bc-blue:#015FFF;--teal:#1FBFAB;--font:'Plus Jakarta Sans',sans-serif;--script:'Cormorant Garamond',serif;--radius:16px;--text-secondary:#5C6E84;--text-muted:#9AAABB;--shadow-card:0 1px 0 rgba(11,29,58,0.04),0 2px 4px rgba(11,29,58,0.04),0 8px 24px rgba(11,29,58,0.08),0 0 0 1px rgba(11,29,58,0.06);--shadow-hover:0 2px 4px rgba(11,29,58,0.04),0 20px 48px rgba(11,29,58,0.16),0 0 0 1px rgba(11,29,58,0.08);--shadow-sm:0 2px 8px rgba(11,29,58,0.06),0 6px 20px rgba(11,29,58,0.08);}
+html,body{height:100%;}
+body{font-family:var(--font);background:#fff;color:var(--navy);overflow-x:hidden;}
+.screen{display:none;min-height:100vh;}.screen.active{display:flex;flex-direction:column;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes drawLine{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+@keyframes dotPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.4)}}
+@keyframes cardRise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+@keyframes shimmer{0%{background-position:200% center}100%{background-position:-200% center}}
+.a0{animation:fadeUp .7s ease both}.a1{animation:fadeUp .7s .2s ease both}.a2{animation:fadeUp .7s .4s ease both}.a3{animation:fadeUp .7s .6s ease both}.a4{animation:fadeUp .7s .8s ease both}
+.cursor-script{display:inline-block;width:1.5px;height:.8em;background:var(--navy);vertical-align:text-bottom;margin-left:1px;animation:blink .8s step-end infinite;opacity:.35;}
+#landing{background:#fff;align-items:stretch;position:relative;overflow:hidden;}
+.landing-body{flex:1;display:flex;align-items:flex-start;justify-content:center;padding:7rem 2rem 6rem;}
+.landing-inner{max-width:1340px;width:100%;text-align:center;padding:0 25px;}
+.landing-headline{font-family:var(--font);font-size:clamp(2.8rem,6.5vw,4.2rem);font-weight:700;line-height:1.05;color:var(--navy);margin-bottom:1.35rem;letter-spacing:-0.03em;}
+.landing-headline .blue{color:var(--bc-blue);}
+.leak-wrap{display:inline-block;font-family:var(--script);font-style:italic;font-weight:600;font-size:1.12em;letter-spacing:-0.01em;cursor:default;overflow:visible;}
+.leak-letter{display:inline-block;transform:translateY(0);opacity:1;}
+.landing-sub{font-size:1rem;color:var(--text-secondary);line-height:1.75;margin-bottom:2rem;max-width:640px;margin-left:auto;margin-right:auto;}
+.divider{height:1px;background:rgba(11,29,58,0.1);max-width:320px;margin:0 auto 2rem;transform-origin:left;animation:drawLine .8s ease 1.4s both;}
+.cta-btn{display:inline-flex;align-items:center;gap:10px;background:var(--bc-blue);color:#fff;border:none;border-radius:12px;padding:1rem 2.5rem;font-family:var(--font);font-size:.975rem;font-weight:600;cursor:pointer;transition:transform .25s ease,box-shadow .25s ease;}
+.cta-btn:hover{transform:translateY(-3px);box-shadow:0 12px 32px rgba(1,95,255,.24);}
+.cta-btn .arrow{transition:transform .2s ease;}.cta-btn:hover .arrow{transform:translateX(5px);}
+.cta-meta{font-size:10px;font-weight:400;color:var(--text-muted);letter-spacing:.04em;margin-top:1.5rem;}
+.cta-meta span{color:rgba(11,29,58,.18);margin:0 5px;}
+#quiz{background:#fff;align-items:stretch;position:relative;overflow:hidden;}
+.quiz-body{flex:1;display:flex;justify-content:center;padding:2.5rem 2rem 4rem;}
+.quiz-inner{max-width:1340px;width:100%;padding:0 25px;}
+.quiz-progress{display:flex;align-items:center;gap:12px;margin-bottom:2.5rem;}
+.progress-bar{flex:1;height:2px;background:rgba(11,29,58,.07);border-radius:99px;overflow:hidden;}
+.progress-fill{height:100%;background:linear-gradient(90deg,#FF68E9,#FF9F45,#FFE04B,#7FE7C1,#0CC2FF,#8C78FF,#015FFF);border-radius:99px;transition:width .6s cubic-bezier(.2,.68,0,1.15);background-size:600% 100%;}
+.progress-label{font-size:10px;font-weight:500;color:var(--text-muted);white-space:nowrap;letter-spacing:.05em;}
+.q-category-wrap{overflow:hidden;margin-bottom:.75rem;}
+.q-category-large{display:block;font-family:var(--script);font-style:italic;font-weight:400;font-size:clamp(1.8rem,4vw,2.6rem);color:var(--navy);opacity:.13;letter-spacing:-.02em;line-height:1.1;min-height:1.2em;white-space:nowrap;overflow:hidden;}
+.scenario-card{background:#fff;border-radius:16px;padding:1.4rem 1.6rem;margin-bottom:1.5rem;box-shadow:var(--shadow-sm);border:1px solid rgba(11,29,58,0.06);}
+.q-text{font-size:clamp(1rem,2.2vw,1.2rem);font-weight:700;line-height:1.4;color:var(--navy);letter-spacing:-.015em;margin-bottom:.5rem;}
+.q-prompt{font-size:10px;font-weight:500;color:var(--text-muted);letter-spacing:.08em;text-transform:uppercase;opacity:0;transition:opacity .5s ease;}.q-prompt.visible{opacity:1;}
+.answer-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-bottom:.5rem;}
+.answer-grid.span-last .acard:last-child:nth-child(odd){grid-column:1/-1;flex-direction:row;align-items:flex-start;gap:1.25rem;padding:1.35rem 1.6rem;min-height:auto;}
+.answer-grid.span-last .acard:last-child:nth-child(odd) .acard-emoji-wrap{margin-bottom:0;flex-shrink:0;}
+.answer-grid.span-last .acard:last-child:nth-child(odd) .acard-body{flex:1;}
+.acard{background:#fff;border-radius:var(--radius);padding:1.5rem 1.5rem 1.35rem;cursor:pointer;min-height:190px;display:flex;flex-direction:column;position:relative;overflow:hidden;box-shadow:var(--shadow-card);transition:transform .5s cubic-bezier(.2,.68,0,1.15),box-shadow .5s ease,opacity .3s ease;}
+.acard::before{content:'';position:absolute;top:0;left:0;right:0;height:2.5px;opacity:0;transition:opacity .35s ease;border-radius:var(--radius) var(--radius) 0 0;z-index:2;}
+.acard::after{content:'';position:absolute;inset:0;background-size:200% auto;opacity:0;pointer-events:none;border-radius:var(--radius);}
+.acard.shimmer-active::after{opacity:1;animation:shimmer 3s ease forwards;}
+[data-q="0"] .acard::after{background:linear-gradient(105deg,transparent 20%,rgba(1,95,255,0.05) 40%,rgba(1,95,255,0.11) 50%,rgba(1,95,255,0.05) 60%,transparent 80%);background-size:200% auto;}
+[data-q="0"] .acard.selected{box-shadow:0 2px 4px rgba(11,29,58,0.06),0 20px 48px rgba(1,95,255,0.14),0 0 0 1.5px rgba(1,95,255,0.35);}
+[data-q="0"] .acard.selected::before{background:linear-gradient(90deg,#015FFF,#4D8FFF);opacity:1;}
+[data-q="1"] .acard::after{background:linear-gradient(105deg,transparent 20%,rgba(255,104,233,0.06) 40%,rgba(255,104,233,0.13) 50%,rgba(255,104,233,0.06) 60%,transparent 80%);background-size:200% auto;}
+[data-q="1"] .acard.selected{box-shadow:0 2px 4px rgba(11,29,58,0.06),0 20px 48px rgba(255,104,233,0.14),0 0 0 1.5px rgba(255,104,233,0.4);}
+[data-q="1"] .acard.selected::before{background:linear-gradient(90deg,#FF68E9,#ffaaef);opacity:1;}
+[data-q="2"] .acard::after{background:linear-gradient(105deg,transparent 20%,rgba(12,194,255,0.06) 40%,rgba(12,194,255,0.13) 50%,rgba(12,194,255,0.06) 60%,transparent 80%);background-size:200% auto;}
+[data-q="2"] .acard.selected{box-shadow:0 2px 4px rgba(11,29,58,0.06),0 20px 48px rgba(12,194,255,0.14),0 0 0 1.5px rgba(12,194,255,0.38);}
+[data-q="2"] .acard.selected::before{background:linear-gradient(90deg,#0CC2FF,#6ddbff);opacity:1;}
+[data-q="3"] .acard::after{background:linear-gradient(105deg,transparent 20%,rgba(127,231,193,0.07) 40%,rgba(127,231,193,0.15) 50%,rgba(127,231,193,0.07) 60%,transparent 80%);background-size:200% auto;}
+[data-q="3"] .acard.selected{box-shadow:0 2px 4px rgba(11,29,58,0.06),0 20px 48px rgba(127,231,193,0.18),0 0 0 1.5px rgba(127,231,193,0.5);}
+[data-q="3"] .acard.selected::before{background:linear-gradient(90deg,#7FE7C1,#b3f0d8);opacity:1;}
+[data-q="4"] .acard::after{background:linear-gradient(105deg,transparent 20%,rgba(140,120,255,0.06) 40%,rgba(140,120,255,0.13) 50%,rgba(140,120,255,0.06) 60%,transparent 80%);background-size:200% auto;}
+[data-q="4"] .acard.selected{box-shadow:0 2px 4px rgba(11,29,58,0.06),0 20px 48px rgba(140,120,255,0.14),0 0 0 1.5px rgba(140,120,255,0.38);}
+[data-q="4"] .acard.selected::before{background:linear-gradient(90deg,#8C78FF,#bdb0ff);opacity:1;}
+.acard:nth-child(odd):hover{transform:translateY(-5px) rotate(-.4deg);box-shadow:var(--shadow-hover);}
+.acard:nth-child(even):hover{transform:translateY(-5px) rotate(.4deg);box-shadow:var(--shadow-hover);}
+.acard:active{transform:scale(.98)!important;}
+.acard.selected{transform:translateY(-4px) scale(1.01);transition:transform .5s cubic-bezier(.2,.68,0,1.15),box-shadow .5s ease;}
+.answer-grid.has-selection .acard:not(.selected){opacity:.38;box-shadow:0 1px 3px rgba(11,29,58,0.03),0 0 0 1px rgba(11,29,58,0.04);}
+.answer-grid.has-selection .acard:not(.selected):hover{opacity:.75;box-shadow:var(--shadow-hover);}
+.acard-emoji-wrap{width:44px;height:44px;margin-bottom:.9rem;flex-shrink:0;border-radius:10px;display:flex;align-items:center;justify-content:center;}
+.acard-emoji{font-size:1.6rem;line-height:1;display:block;transition:transform .25s cubic-bezier(.2,.68,0,1.15);}
+.acard:hover .acard-emoji{transform:scale(1.15) rotate(-8deg);}
+.acard.selected .acard-emoji{transform:scale(1.2) rotate(8deg);}
+.acard-body{flex:1;display:flex;flex-direction:column;}
+.acard-title{font-size:.95rem;font-weight:700;color:var(--navy);line-height:1.25;letter-spacing:-.015em;margin-bottom:.4rem;}
+.acard-desc{font-size:.78rem;color:var(--text-secondary);line-height:1.58;flex:1;}
+.acard-tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:.9rem;}
+.acard-tag{font-size:.65rem;font-weight:500;color:var(--text-muted);background:rgba(11,29,58,0.04);border:1px solid rgba(11,29,58,0.08);border-radius:99px;padding:3px 9px;}
+.q-nav{display:flex;justify-content:space-between;align-items:center;padding-top:1.25rem;border-top:1px solid rgba(11,29,58,0.07);}
+.back-btn{font-size:.85rem;color:var(--text-muted);background:none;border:none;cursor:pointer;padding:8px 0;font-weight:500;}
+.back-btn:hover{color:var(--navy);}
+.next-btn{display:inline-flex;align-items:center;gap:7px;background:var(--bc-blue);color:#fff;border:none;border-radius:10px;padding:.75rem 1.6rem;font-size:.9rem;font-weight:600;cursor:pointer;transition:all .25s ease;opacity:.22;pointer-events:none;}
+.next-btn.enabled{opacity:1;pointer-events:all;}
+.next-btn.enabled:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(1,95,255,.35);}
+.dot-canvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:0;}
+.landing-body,.quiz-body,.gate-body{position:relative;z-index:1;}
+#gate{background:#fff;align-items:stretch;}
+.gate-body{flex:1;display:flex;align-items:flex-start;justify-content:center;padding:3rem 1.5rem 4rem;overflow-y:auto;}
+.gate-inner{max-width:760px;width:100%;text-align:center;}
+.gate-badge{display:inline-flex;align-items:center;gap:7px;background:rgba(31,191,171,.07);border:1px solid rgba(31,191,171,.22);border-radius:99px;padding:5px 13px;margin-bottom:1.6rem;}
+.gate-badge-dot{width:6px;height:6px;background:var(--teal);border-radius:50%;animation:dotPulse 2s ease-in-out infinite;}
+.gate-badge-text{font-size:10px;font-weight:500;color:var(--teal);letter-spacing:.07em;text-transform:uppercase;}
+.gate-headline{font-size:clamp(1.75rem,4vw,2.5rem);font-weight:700;color:var(--navy);line-height:1.12;margin-bottom:.85rem;letter-spacing:-.025em;}
+.gate-headline .script{font-family:var(--script);font-style:italic;font-weight:600;font-size:1.1em;}
+.gate-sub{font-size:.925rem;color:var(--text-secondary);line-height:1.72;margin-bottom:1.6rem;margin-left:auto;margin-right:auto;}
+.leak-card{background:#fff;border:1px solid rgba(11,29,58,0.08);border-radius:14px;padding:1.4rem 1.5rem;text-align:left;margin-bottom:.75rem;box-shadow:var(--shadow-sm);position:relative;overflow:hidden;}
+.leak-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#015FFF,#0CC2FF,#7FE7C1);}
+.leak-tag{font-size:9px;font-weight:600;color:var(--bc-blue);letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px;display:flex;align-items:center;gap:5px;}
+.leak-tag::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--bc-blue);display:inline-block;flex-shrink:0;}
+.leak-title{font-size:1.05rem;font-weight:700;color:var(--navy);margin-bottom:10px;line-height:1.3;letter-spacing:-.015em;}
+.leak-body{font-size:.82rem;color:var(--text-secondary);line-height:1.68;margin-bottom:14px;}
+.leak-body p{margin-bottom:7px;}.leak-body p:last-child{margin-bottom:0;}
+.leak-insight{background:rgba(1,95,255,0.04);border:1px solid rgba(1,95,255,0.12);border-radius:9px;padding:12px 14px;margin-bottom:10px;}
+.leak-insight-label{font-size:8.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--bc-blue);margin-bottom:5px;display:flex;align-items:center;gap:5px;}
+.leak-insight-text{font-size:.78rem;color:var(--text-secondary);line-height:1.58;}
+.leak-hint{font-size:.72rem;color:var(--text-muted);letter-spacing:.02em;margin-top:10px;}
+.gate-divider{display:flex;align-items:center;gap:12px;margin:.75rem 0;}
+.gate-divider::before,.gate-divider::after{content:'';flex:1;height:1px;background:rgba(11,29,58,0.08);}
+.gate-divider-text{font-size:.75rem;color:var(--text-muted);white-space:nowrap;}
+.leak-locked{background:rgba(11,29,58,.02);border:1px solid rgba(11,29,58,0.07);border-radius:14px;padding:1.4rem 1.5rem;text-align:left;margin-bottom:1.25rem;position:relative;overflow:hidden;cursor:pointer;}
+.leak-locked-blur{filter:blur(5px);pointer-events:none;user-select:none;}
+.lock-overlay{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:2;}
+.lock-ring{width:32px;height:32px;background:var(--navy);border-radius:50%;display:flex;align-items:center;justify-content:center;margin-bottom:6px;}
+.lock-text{font-size:10px;font-weight:400;color:var(--text-secondary);letter-spacing:.04em;}
+.privacy-note{display:flex;align-items:center;justify-content:center;gap:5px;font-size:10px;color:var(--text-muted);letter-spacing:.03em;}
+.modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(11,29,58,0.52);display:flex;align-items:center;justify-content:center;z-index:9999;padding:1.5rem;opacity:0;pointer-events:none;transition:opacity .25s ease;overflow-y:auto;}
+.modal-overlay.open{opacity:1;pointer-events:all;}
+.modal-card{background:#fff;border-radius:20px;padding:2rem 1.75rem 1.75rem;max-width:420px;width:100%;position:relative;text-align:center;box-shadow:0 24px 64px rgba(11,29,58,0.28),0 0 0 1px rgba(11,29,58,0.06);transform:translateY(20px);transition:transform .35s cubic-bezier(.2,.68,0,1.15);}
+.modal-overlay.open .modal-card{transform:translateY(0);}
+.modal-close{position:absolute;top:14px;right:14px;width:28px;height:28px;border-radius:50%;background:rgba(11,29,58,0.05);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text-muted);}
+.modal-close:hover{background:rgba(11,29,58,0.1);}
+.modal-lock-icon{width:44px;height:44px;border-radius:50%;background:rgba(11,29,58,0.05);display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;}
+.modal-headline{font-size:1.2rem;font-weight:700;color:var(--navy);line-height:1.25;letter-spacing:-.02em;margin-bottom:.6rem;}
+.modal-sub{font-size:.82rem;color:var(--text-secondary);line-height:1.6;margin-bottom:1.25rem;max-width:280px;margin-left:auto;margin-right:auto;}
+/* Marketo form overrides */
+#mktoForm_1569{width:100%!important;}
+#mktoForm_1569 .mktoFormRow,#mktoForm_1569 .mktoFieldWrap,#mktoForm_1569 .mktoEmailField{width:100%!important;}
+#mktoForm_1569 input[type=email]{width:100%!important;border:1px solid rgba(11,29,58,0.14)!important;border-radius:10px!important;padding:.75rem 1rem!important;font-family:var(--font)!important;font-size:.9rem!important;color:var(--navy)!important;background:#fff!important;box-shadow:none!important;outline:none!important;margin-bottom:8px!important;}
+#mktoForm_1569 input[type=email]:focus{border-color:var(--bc-blue)!important;box-shadow:0 0 0 3px rgba(1,95,255,.08)!important;}
+#mktoForm_1569 .mktoButtonWrap{margin:0!important;}
+#mktoForm_1569 .mktoButton{width:100%!important;background:var(--bc-blue)!important;color:#fff!important;border:none!important;border-radius:10px!important;padding:.875rem!important;font-family:var(--font)!important;font-size:.95rem!important;font-weight:600!important;cursor:pointer!important;transition:all .22s ease!important;}
+#mktoForm_1569 .mktoButton:hover{transform:translateY(-2px)!important;box-shadow:0 12px 32px rgba(1,95,255,.35)!important;}
+#mktoForm_1569 .mktoLabel,#mktoForm_1569 .mktoAsterix{display:none!important;}
+#mktoForm_1569 .mktoError{font-size:.78rem!important;color:#e53e3e!important;}
+.modal-privacy{display:flex;align-items:center;justify-content:center;gap:5px;margin-top:.75rem;font-size:10px;color:var(--text-muted);letter-spacing:.03em;}
+@media(max-width:640px){
+  .landing-body{padding:3rem 1.25rem 3.5rem;}
+  .landing-headline{font-size:clamp(2.2rem,10vw,3rem);}
+  .cta-btn{padding:.875rem 2rem;font-size:.9rem;width:100%;justify-content:center;}
+  .quiz-body{padding:1.25rem 1rem 3rem;}
+  .answer-grid{grid-template-columns:1fr;gap:10px;}
+  .acard{min-height:auto;padding:1.1rem 1.15rem 1rem;}
+  .gate-body{padding:1.25rem 1.1rem 3rem;}
+  .gate-badge{margin-bottom:.75rem;}
+  .gate-headline{font-size:clamp(1.3rem,6vw,1.75rem);margin-bottom:.5rem;}
+  .gate-sub{font-size:.8rem;margin-bottom:.75rem;}
+  .leak-card{padding:1rem 1.1rem;margin-bottom:.5rem;}
+  .leak-title{font-size:.9rem;}
+  .leak-body{font-size:.75rem;margin-bottom:8px;}
+  .leak-insight{padding:8px 10px;margin-bottom:6px;}
+  .leak-insight-text{font-size:.72rem;}
+  .leak-hint{font-size:.68rem;}
+  .gate-divider{margin:.5rem 0;}
+  .lock-text{font-size:9px;}
+  .modal-card{padding:1.5rem 1.25rem 1.25rem;}
+}
+</style>
+</head>
+<body>
+
+<!-- LANDING -->
+<div id="landing" class="screen active">
+  <canvas class="dot-canvas" id="landing-canvas"></canvas>
+  <div class="landing-body"><div class="landing-inner">
+    <h1 class="landing-headline a0">Your ad spend<br>has a <span class="leak-wrap" id="leak-wrap"></span><br><span class="blue">Find it.</span></h1>
+    <p class="landing-sub a1">A quick, no-BS diagnosis of where your acquisition spend is leaking, and how to stop it.</p>
+    <div class="divider a2"></div>
+    <div class="a3">
+      <button class="cta-btn" onclick="startQuiz()">Run my diagnosis <span class="arrow">→</span></button>
+      <div class="cta-meta">5 questions <span>·</span> 90 seconds <span>·</span> Not generic</div>
+    </div>
+  </div></div>
+</div>
+
+<!-- QUIZ -->
+<div id="quiz" class="screen">
+  <canvas class="dot-canvas" id="quiz-canvas"></canvas>
+  <div class="quiz-body"><div class="quiz-inner">
+    <div class="quiz-progress">
+      <div class="progress-bar"><div class="progress-fill" id="prog-fill" style="width:20%"></div></div>
+      <span class="progress-label" id="prog-label">1 of 5</span>
+    </div>
+    <div id="q-container"></div>
+    <div class="q-nav">
+      <button class="back-btn" id="back-btn" onclick="prevQ()" style="visibility:hidden">← Back</button>
+    </div>
+  </div></div>
+</div>
+
+<!-- GATE -->
+<div id="gate" class="screen">
+  <canvas class="dot-canvas" id="gate-canvas"></canvas>
+  <div class="gate-body"><div class="gate-inner">
+    <div class="gate-badge a0"><div class="gate-badge-dot"></div><span class="gate-badge-text">Your diagnosis is ready</span></div>
+    <h2 class="gate-headline a1">Your first leak.<br><span class="script">Uncomfortably specific.</span></h2>
+    <p class="gate-sub a2">One more step to see the second leak and exactly how to fix both.</p>
+    <div class="leak-card a3">
+      <div class="leak-tag">Leak 01</div>
+      <div class="leak-title" id="gate-leak1-title"></div>
+      <div class="leak-body" id="gate-leak1-body"></div>
+      <div class="leak-insight">
+        <div class="leak-insight-label">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--bc-blue)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+          What this is costing you
+        </div>
+        <div class="leak-insight-text" id="gate-leak1-cost"></div>
+      </div>
+      <div class="leak-hint">Your full report includes three action steps, benchmark costs, and exactly how to close this leak.</div>
+    </div>
+    <div class="gate-divider a3"><span class="gate-divider-text">This is only half the picture.</span></div>
+    <div class="leak-locked a3" onclick="openModal()">
+      <div class="leak-locked-blur">
+        <div class="leak-tag">Leak 02</div>
+        <div class="leak-title" id="gate-leak2-title-blur"></div>
+        <div class="leak-body" id="gate-leak2-body-blur"></div>
+        <div class="leak-insight">
+          <div class="leak-insight-label">What this is costing you</div>
+          <div class="leak-insight-text" id="gate-leak2-cost-blur"></div>
+        </div>
+        <div class="leak-hint">Your full report includes three action steps, benchmark costs, and exactly how to close this leak.</div>
+      </div>
+      <div class="lock-overlay">
+        <div class="lock-ring"><svg width="12" height="14" viewBox="0 0 12 14" fill="none"><rect x="1" y="6" width="10" height="8" rx="2" fill="#fff"/><path d="M3.5 6V4.5a2.5 2.5 0 015 0V6" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+        <span class="lock-text">Click to unlock your full diagnosis.</span>
+      </div>
+    </div>
+    <div class="privacy-note a4">
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      No spam. Just your results.
+    </div>
+  </div></div>
+</div>
+
+<!-- MODAL -->
+<div id="modal-overlay" class="modal-overlay" onclick="closeModalOutside(event)">
+  <div class="modal-card">
+    <button class="modal-close" onclick="closeModal()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    <div class="modal-lock-icon"><svg width="20" height="22" viewBox="0 0 20 22" fill="none"><rect x="1" y="9" width="18" height="13" rx="3" stroke="var(--navy)" stroke-width="1.75"/><path d="M5 9V6.5a5 5 0 0110 0V9" stroke="var(--navy)" stroke-width="1.75" stroke-linecap="round"/></svg></div>
+    <h3 class="modal-headline">See what's actually<br>limiting your performance</h3>
+    <p class="modal-sub">Enter your email to see the full diagnosis and how to fix both leaks.</p>
+    <form id="mktoForm_1569"></form>
+    <div class="modal-privacy">
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      No spam. Just your results.
+    </div>
+  </div>
+</div>
+
+<script>
+const questions=[
+  {category:"Acquisition spend",text:"Where is most of your new customer acquisition spend going today?",prompt:"Pick where most of your budget actually goes",answers:[
+    {text:"Paid social",desc:"Driving discovery across social platforms… where performance spikes, stalls, or surprises all in the same week.",tags:["Meta","TikTok","Pinterest"],emoji:"🛼"},
+    {text:"Paid search",desc:"Capturing high-intent demand from people already looking for what you offer. And yes, this means paying for every click.",tags:["Google","Bing"],emoji:"🔦"},
+    {text:"Programmatic",desc:"Scaling reach across the open web through display and video. When it's dialed in, it works. When it's not… wth knows.",tags:["DSPs","Display networks"],emoji:"🪄"},
+    {text:"Retail media",desc:"Getting in front of shoppers close to purchase. The platform runs the show; their ecosystem, on their terms.",tags:["Amazon","Walmart Connect"],emoji:"🛒"},
+    {text:"A mix",desc:"A little of everything. Some of it works, some of it's unclear. Really, no single channel is fully in charge.",tags:["No single dominant channel"],emoji:"🎰"}
+  ]},
+  {category:"Audience building",text:"Be honest… how are you building prospecting audiences for paid media?",prompt:"Closest to how it works today (for real)",answers:[
+    {text:"Platform-native lookalikes",desc:"Letting the platform build audiences from its own signals… clicks, views, pixel fires, the usual.",tags:["Platform decides"],emoji:"👯"},
+    {text:"CRM uploads",desc:"Exporting customer lists and uploading them every so often. Accurate at the time… not so much over time.",tags:["Static lists","Manual refresh"],emoji:"📤"},
+    {text:"No custom audiences",desc:"Fully platform-managed targeting. TL;DR: Set the goal and let it figure out who to show.",tags:["Fully platform-managed"],emoji:"🙈"},
+    {text:"A mix",desc:"Different approach in each channel. It works, but it's not exactly one unified strategy.",tags:["Varies by channel"],emoji:"🧩"}
+  ]},
+  {category:"Intent and recovery",text:"What happens when a high-intent visitor leaves without buying?",prompt:"Come on… be honest",answers:[
+    {text:"Coordinated cross-channel",desc:"Everything kicks in right away. Email, ads, push… all working off the same moment.",tags:["Email","Ads","Push aligned"],emoji:"🕺"},
+    {text:"Retargeting ads only",desc:"They get followed around with ads. That's it. That's the whole play.",tags:["Single channel"],emoji:"🪃"},
+    {text:"Email if we have it",desc:"If they're known, they get an email. If not… nothing happens.",tags:["Needs identification"],emoji:"🤞"},
+    {text:"Not much, honestly",desc:"No real follow-up. The session ends. We don't have that kind of time or system right now.",tags:["No systematic play"],emoji:"🫠"}
+  ]},
+  {category:"Abandonment speed",text:"How quickly does cart abandonment trigger a recovery play?",prompt:"Like, what actually happens",answers:[
+    {text:"Within minutes",desc:"Recovery kicks off almost immediately. The window is still open, and it's used.",tags:["Real-time detection"],emoji:"🐆"},
+    {text:"Within hours",desc:"It happens later. Still relevant, but some of the intent has probably cooled.",tags:["Near-real-time"],emoji:"🚲"},
+    {text:"Same-day batch",desc:"End-of-day processing. By the time it runs, that moment is looong gone.",tags:["End of day"],emoji:"🐢"},
+    {text:"We rely on our ESP",desc:"Timer-based emails, set and scheduled. Same delay, no matter what just happened.",tags:["Timer-based","Klaviyo, etc."],emoji:"📬"}
+  ]},
+  {category:"Basket growth",text:"How do you grow basket size today?",prompt:"What's really doing the work here?",answers:[
+    {text:"On-site recommendations",desc:"Products show up while they're still browsing. It works because the intent is literally right there.",tags:["In-session","AI-powered"],emoji:"🎯"},
+    {text:"Post-purchase email",desc:"The follow-up comes after checkout. Useful… sometimes.",tags:["After checkout"],emoji:"💌"},
+    {text:"No systematic approach",desc:"No real strategy here. If the basket's bigger, let's call it a \"happy accident.\"",tags:["Nothing coordinated"],emoji:"🌵"},
+    {text:"A combination",desc:"A bit during the session, a bit after. Different moments, loosely connected, kinda sorta.",tags:["Multiple tactics"],emoji:"🎸"}
+  ]}
+];
+
+const patterns={
+P01:{subhead:"Two leaks found in your paid setup",leak1Title:"Audience quality is costing you on every media dollar",leak1Body:"<p>Paid social platforms build lookalike audiences from what they can see. What they can't see is who actually bought, came back twice, and spent above AOV. That data lives in your systems.</p><p>The result is a lookalike audience optimized for people who kind of resemble your average customer instead of your best one.</p>",leak1Cost:"Lookalike audiences built on platform signals underperform first-party based seeds by 30–40% on match quality. At current CPMs, that inefficiency shows up directly as higher CAC. And there's a second leak compounding it.",leak1CostBullets:["Lookalike audiences built on platform signals underperform first-party–based seeds by 30–40% on match quality.","At current CPMs, that inefficiency shows up directly as higher CAC."],leak1Actions:["Pull your top 10% of customers by LTV. Is that profile what your ad platforms receive as a seed?","Time how long it takes a conversion event to suppress a customer across every ad platform.","Map how many platforms are running campaigns right now and how many of them get the same audience definition. TL;DR: If the answer is none or inconsistent, every platform is building its own version of who your best customers are."],leak1Play:"Lookalike Audience Expansion",leak1PlayDesc:"<p>Lookalike Audience Expansion scores your full customer base against behavioral, transactional, and declared data to build a high-precision seed audience. Then, it pushes to every ad platform.</p><p>When conversions come in, the model retrains. Customers are suppressed automatically across every channel the moment a purchase hits their profile.</p>",leak2Title:"Cart recovery timing is leaving recoverable revenue behind",leak2Body:"<p>A shopper adds to cart. Browses a few more pages. Leaves. The recovery sequence starts whenever a batch job runs. By then, the window where an on-site intervention could have closed the sale is gone.</p><p>If every channel manages its own recovery logic, a customer who converted on Tuesday is still seeing recovery ads on Wednesday.</p>",leak2Cost:"70% of online carts are abandoned and timing is one of the most controllable drivers. The first 30 minutes are the highest-conversion window. Most systems miss it.",leak2CostBullets:["70% of online carts are abandoned, and timing is one of the most controllable drivers.","Real-time, cross-channel recovery outperforms delayed, single-channel approaches.","The first 30 minutes are the highest-conversion window; most systems miss it."],leak2Actions:["Time the gap between a cart abandonment event and your first recovery touchpoint. If it's longer than 30 minutes, the highest-conversion window is gone.","Check if your recovery sequence can intervene on-site before a shopper leaves. If the answer is no, anonymous high-intent visitors leave without a recovery play.","Map what happens across channels at the moment of purchase. If each platform manages its own suppression list, customers receive recovery messages even after they've already checked out."],leak2Play:"Abandoned Cart Recovery",leak2PlayDesc:"<p>Abandoned Cart Recovery detects abandonment the moment a session ends without an order and determines the right intervention.</p><p>The autonomous decisioning figures out whether an incentive is actually needed or whether a reminder is enough. When a purchase happens, suppression fires across every channel simultaneously.</p>"},
+P02:{subhead:"Two leaks found across your paid social strategy and audience data",leak1Title:"Stale audience data is working against paid performance",leak1Body:"<p>Uploading customer lists to ad platforms is a stronger starting point than relying purely on platform signals. The problem is a CRM upload is a snapshot. The moment that file goes stale, platforms optimize for a version of your customer that no longer exists.</p>",leak1Cost:"Audience lists decay fast. At current CPMs, stale seeds mean paying more to reach people who look less and less like your highest-value customers. And there's a second leak compounding it.",leak1CostBullets:["Audience lists decay fast. Buying patterns shift. Match quality erodes with every week that passes without a refresh.","At current CPMs, stale seeds mean you're paying more to reach people who look less and less like your highest-value customers."],leak1Actions:["Check when your ad platforms last received a refreshed customer list. If it's been more than 30 days, the seed driving your lookalikes has drifted.","Pull your highest-LTV customers from the last 90 days. Compare that list to what's currently seeding your platforms. The gap between those two lists is your Leak 01 cost.","Map how many manual steps it takes to get a refreshed audience from your CRM into every platform simultaneously. If the answer involves exports, uploads, and someone's calendar, the refresh cadence will always lag."],leak1Play:"Lookalike Audience Expansion",leak1PlayDesc:"<p>Lookalike Audience Expansion scores your full customer base against behavioral, transactional, and declared data to build a high-precision seed audience, then pushes it to every ad platform simultaneously. No manual exports. No stale lists.</p><p>When conversions come in, the model retrains. Customers are suppressed automatically across every channel the moment a purchase hits their profile.</p>",leak2Title:"Cart recovery timing is costing you recoverable revenue",leak2Body:"<p>A shopper adds to cart. Browses a few more pages. Leaves. The recovery sequence starts whenever the batch job runs. By then, the window where an on-site intervention could have closed the sale is gone.</p><p>If every channel manages its own recovery logic, a customer who converted on Tuesday is still seeing recovery ads on Wednesday.</p>",leak2Cost:"70% of online carts are abandoned and timing is one of the most controllable drivers. The first 30 minutes are the highest-conversion window. Most systems miss it.",leak2CostBullets:["70% of online carts are abandoned, and timing is one of the most controllable drivers.","Real-time cross-channel recovery consistently outperforms delayed single-channel approaches.","The first 30 minutes are the highest-conversion window. Most systems miss it."],leak2Actions:["Time the gap between a cart abandonment event and your first recovery touchpoint. If it's longer than 30 minutes, the highest-conversion window is gone.","Check if your recovery sequence can intervene on-site before a shopper leaves. If the answer is no, anonymous high-intent visitors leave without a recovery play.","Map what happens across channels the moment a purchase occurs. If each platform manages its own suppression list, customers receive recovery messages after they've already checked out."],leak2Play:"Abandoned Cart Recovery",leak2PlayDesc:"<p>Abandoned Cart Recovery detects abandonment the moment a session ends without an order and determines the right intervention.</p><p>Autonomous decisioning figures out whether an incentive is actually needed or whether a reminder is enough. When a purchase happens, suppression fires across every channel simultaneously.</p>"},
+P03:{subhead:"Two leaks found across your paid media strategy and first-purchase conversion",leak1Title:"Platform-controlled targeting is leaving money behind on every campaign",leak1Body:"<p>Every targeting decision is the platform's call. With no custom audiences in place, ad platforms make decisions from their own behavioral signals. No first-party customer data, purchase history, or declared preferences are powering your campaigns.</p>",leak1Cost:"First-party data has no path into your ad platforms. Spend efficiency has a ceiling you can't move from inside the platform. And there's a second leak compounding it.",leak1CostBullets:["First-party data has no path into your ad platforms. Targeting accuracy is capped by what the platform can see.","Spend efficiency has a ceiling you can't move from inside the platform."],leak1Actions:["Pull your highest-LTV customers from the last 90 days. Check whether anything resembling that profile is informing your current targeting.","Compare CVR across campaigns where you have input on audience definition vs. campaigns running on platform-managed targeting. The gap is your Leak 01 cost.","Map what first-party data exists in your systems right now and identify what it would take to get that into your ad platforms."],leak1Play:"Lookalike Audience Expansion",leak1PlayDesc:"<p>Lookalike Audience Expansion scores your full customer base against behavioral, transactional, and declared data to build a high-precision seed audience, then pushes it to every ad platform simultaneously. No manual exports. No stale lists.</p><p>When conversions come in, the model retrains. Customers are suppressed automatically across every channel the moment a purchase hits their profile.</p>",leak2Title:"High-intent visitors are leaving money behind on every session",leak2Body:"<p>Traffic is coming in. A portion of it is genuinely close to converting. But nothing's triggering an intervention while they're still there. The session ends. They leave. No recovery play follows them.</p><p>Most commerce sites convert 2-4% of visitors. The other 96-98% leave without purchasing. Some of them were never going to buy. Some of them were literally right there.</p>",leak2Cost:"Engaged pre-purchase visitors are among the highest-margin conversion opportunities in the funnel. A recovery play that only works on identified customers has already written off everyone who hasn't given you an email address.",leak2CostBullets:["Engaged pre-purchase visitors are among the highest-margin conversion opportunities in the funnel.","A recovery play that only works on identified customers has already written off everyone who hasn't given you an email address."],leak2Actions:["Pull site sessions from the last 30 days and filter for visitors with three or more product page views who didn't convert. That's your highest-priority unconverted segment.","Check what recovery plays are currently active for anonymous visitors. TL;DR: If the answer is nothing, that segment leaves with no intervention behind them.","Map the average time between a visitor's first high-intent signal and your first recovery touchpoint. If recovery only starts after email capture, the in-session window is gone."],leak2Play:"First-Purchase Acceleration",leak2PlayDesc:"<p>First-Purchase Acceleration identifies high-engagement pre-purchase visitors in real time and delivers the right intervention during the session without requiring an email address. The decisioning evaluates which intervention actually fits.</p><p>When a visitor converts, their full pre-purchase behavioral history merges into their identified profile immediately.</p>"},
+P04:{subhead:"Two leaks found across your paid media strategy and cart recovery",leak1Title:"Fragmented audience data is working against paid performance",leak1Body:"<p>A mix of audience approaches sounds like coverage. In practice, each platform works from a different version of who your best customers are. Meta has one read. Google has another. None of them reflect the same understanding of who's actually worth acquiring.</p><p>The result is inconsistent performance across channels and no clean way to diagnose what's working.</p>",leak1Cost:"15-30% of retargeting spend typically goes to low-intent audiences or customers who've already converted. When every platform optimizes for a different audience definition, you can't isolate what's actually working or fix what isn't. And there's a second leak compounding it.",leak1CostBullets:["15-30% of retargeting spend typically goes to low-intent audiences or customers who've already converted.","When every platform optimizes for a different audience definition, you can't isolate what's actually working or fix what isn't."],leak1Actions:["Pull your current audience definitions across every active paid channel. Check how many of them share the same source data.","Compare CAC across channels running coordinated audience definitions versus channels running independently. That gap is your Leak 01 cost.","Map what it would take to push one consistent audience definition to every platform simultaneously."],leak1Play:"Intent-Based Targeting",leak1PlayDesc:"<p>Intent-Based Targeting builds a unified intent score from behavior across the full customer profile and activates the highest-intent audiences across every paid channel simultaneously.</p><p>Converted customers get suppressed the moment a purchase hits their profile. Every channel updates at once.</p>",leak2Title:"Cart recovery timing is costing you recoverable revenue",leak2Body:"<p>A shopper adds to cart. Browses a few more pages. Leaves. The recovery sequence starts whenever the batch job runs. By then, the window where an on-site intervention could have closed the sale is gone.</p><p>If every channel manages its own recovery logic, a customer who converted on Tuesday is still seeing recovery ads on Wednesday.</p>",leak2Cost:"70% of online carts are abandoned and timing is one of the most controllable drivers. The first 30 minutes are the highest-conversion window. Most systems miss it.",leak2CostBullets:["70% of online carts are abandoned, and timing is one of the most controllable drivers.","Real-time cross-channel recovery consistently outperforms delayed single-channel approaches.","The first 30 minutes are the highest-conversion window. Most systems miss it."],leak2Actions:["Time the gap between a cart abandonment event and your first recovery touchpoint. If it's longer than 30 minutes, the highest-conversion window is gone.","Check if your recovery sequence can intervene on-site before a shopper leaves. If the answer is no, anonymous high-intent visitors leave without a recovery play.","Map what happens across channels the moment a purchase occurs. If each platform manages its own suppression list, customers receive recovery messages after they've already checked out."],leak2Play:"Abandoned Cart Recovery",leak2PlayDesc:"<p>Abandoned Cart Recovery detects abandonment the moment a session ends without an order and determines the right intervention.</p><p>Autonomous decisioning figures out whether an incentive is actually needed or whether a reminder is enough. When a purchase happens, suppression fires across every channel simultaneously.</p>"},
+P05:{subhead:"Two leaks found across your paid search strategy and audience quality",leak1Title:"Audience seed quality is costing you on every search campaign",leak1Body:"<p>Paid search captures high-intent demand from people already looking for what you sell. That's a strong starting point. But what happens when those visitors get added to lookalike audiences? The platform builds from its own signals instead of from who actually bought, came back, and spent above AOV.</p><p>The result is a lookalike audience optimized toward people who search like your average customer. Not your best one.</p>",leak1Cost:"Lookalike audiences built on platform signals underperform first-party based seeds by 30–40% on match quality. At current CPMs, that inefficiency shows up directly as higher CAC. And there's a second leak compounding it.",leak1CostBullets:["Lookalike audiences built on platform signals underperform first-party-based seeds by 30-40% on match quality.","At current CPMs, that inefficiency shows up directly as higher CAC."],leak1Actions:["Pull your top 10% of customers by LTV. Is that profile what your ad platforms receive as a seed?","Time how long it takes a conversion event to suppress a customer across every ad platform.","Map how many platforms are running campaigns right now and how many get the same audience definition. If the answer is none or inconsistent, every platform is building its own version of who your best customers are."],leak1Play:"Lookalike Audience Expansion",leak1PlayDesc:"<p>Lookalike Audience Expansion scores your full customer base against behavioral, transactional, and declared data to build a high-precision seed audience, then pushes it to every ad platform simultaneously. No manual exports. No stale lists.</p><p>When conversions come in, the model retrains. Customers are suppressed automatically across every channel the moment a purchase hits their profile.</p>",leak2Title:"Cart recovery timing is leaving recoverable revenue behind",leak2Body:"<p>A shopper adds to cart. Browses a few more pages. Leaves. The recovery sequence starts whenever the batch job runs. By then, the window where an on-site intervention could have closed the sale is gone.</p><p>If every channel manages its own recovery logic, a customer who converted on Tuesday is still seeing recovery ads on Wednesday.</p>",leak2Cost:"70% of online carts are abandoned and timing is one of the most controllable drivers. The first 30 minutes are the highest-conversion window. Most systems miss it.",leak2CostBullets:["70% of online carts are abandoned, and timing is one of the most controllable drivers.","Real-time cross-channel recovery consistently outperforms delayed single-channel approaches.","The first 30 minutes are the highest-conversion window. Most systems miss it."],leak2Actions:["Time the gap between a cart abandonment event and your first recovery touchpoint. If it's longer than 30 minutes, the highest-conversion window is gone.","Check if your recovery sequence can intervene on-site before a shopper leaves. If the answer is no, anonymous high-intent visitors leave without a recovery play.","Map what happens across channels the moment a purchase occurs. If each platform manages its own suppression list, customers receive recovery messages after they've already checked out."],leak2Play:"Abandoned Cart Recovery",leak2PlayDesc:"<p>Abandoned Cart Recovery detects abandonment the moment a session ends without an order and determines the right intervention.</p><p>Autonomous decisioning figures out whether an incentive is actually needed or whether a reminder is enough. When a purchase happens, suppression fires across every channel simultaneously.</p>"},
+P06:{subhead:"Two leaks found across your paid search strategy and audience data",leak1Title:"Stale audience data is working against search spend",leak1Body:"<p>Uploading customer lists to ad platforms is a stronger starting point than relying purely on platform signals. The problem is a CRM upload is a snapshot. The moment that file goes stale, platforms optimize for a version of your customer that no longer exists. New purchase behavior, updated LTV signals, recent engagement patterns. None of it makes it in until someone re-exports.</p><p>The platform keeps optimizing. Just not toward your actual best customers anymore.</p>",leak1Cost:"26% of digital ad spend is wasted due to poor targeting and data quality. Stale audience data is a direct contributor. At $400k in monthly spend, that's $104k in waste per month. And there's a second leak compounding it.",leak1CostBullets:["26% of digital ad spend is wasted due to poor targeting and data quality. Stale audience data is a direct contributor.","At $400k in monthly spend, that's $104k in waste per month — before accounting for the CAC impact of optimizing toward the wrong customers."],leak1Actions:["Check when your ad platforms last received a refreshed customer list. If it's been more than 30 days, the seed driving your lookalikes has drifted.","Pull your highest-LTV customers from the last 90 days. Compare that list to what's currently seeding your platforms. The gap between those two lists is your Leak 01 cost.","Map how many manual steps it takes to get a refreshed audience from your CRM into every platform simultaneously. If the answer involves exports, uploads, and someone's calendar, the refresh cadence will always lag."],leak1Play:"Lookalike Audience Expansion",leak1PlayDesc:"<p>Lookalike Audience Expansion scores your full customer base against behavioral, transactional, and declared data to build a high-precision seed audience, then pushes it to every ad platform simultaneously. No manual exports. No stale lists.</p><p>When conversions come in, the model retrains. Customers are suppressed automatically across every channel the moment a purchase hits their profile.</p>",leak2Title:"Cart recovery timing is costing you recoverable revenue",leak2Body:"<p>A shopper adds to cart. Browses a few more pages. Leaves. The recovery sequence starts whenever the batch job runs. By then, the window where an on-site intervention could have closed the sale is gone.</p><p>If every channel manages its own recovery logic, a customer who converted on Tuesday is still seeing recovery ads on Wednesday.</p>",leak2Cost:"70% of online carts are abandoned and timing is one of the most controllable drivers. The first 30 minutes are the highest-conversion window. Most systems miss it.",leak2CostBullets:["70% of online carts are abandoned, and timing is one of the most controllable drivers.","Real-time cross-channel recovery consistently outperforms delayed single-channel approaches.","The first 30 minutes are the highest-conversion window. Most systems miss it."],leak2Actions:["Time the gap between a cart abandonment event and your first recovery touchpoint. If it's longer than 30 minutes, the highest-conversion window is gone.","Check if your recovery sequence can intervene on-site before a shopper leaves. If the answer is no, anonymous high-intent visitors leave without a recovery play.","Map what happens across channels the moment a purchase occurs. If each platform manages its own suppression list, customers receive recovery messages after they've already checked out."],leak2Play:"Abandoned Cart Recovery",leak2PlayDesc:"<p>Abandoned Cart Recovery detects abandonment the moment a session ends without an order and determines the right intervention.</p><p>Autonomous decisioning figures out whether an incentive is actually needed or whether a reminder is enough. When a purchase happens, suppression fires across every channel simultaneously.</p>"},
+P07:{subhead:"Two leaks found across your programmatic spend and cart recovery",leak1Title:"Disconnected audience signals are working against programmatic spend",leak1Body:"<p>Programmatic buying environments bid against whoever has the best audience definition. Right now, the definition feeding your campaigns is built from platform signals alone. On-site behavior, email engagement, loyalty status, purchase history — none of that is actually informing who gets targeted or suppressed.</p><p>Every platform sees a fragment of your customer. None of them see the full picture. In an environment where the bid goes to whoever has the strongest audience intelligence, that gap has a direct cost.</p>",leak1Cost:"The ANA's programmatic benchmark reported $26.8B in unrealized media value industry-wide. Weak audience definitions are a primary driver. And there's a second leak compounding it.",leak1CostBullets:["The ANA's programmatic benchmark reported $26.8B in unrealized media value industry-wide. Weak audience definitions are a primary driver.","15-30% of retargeting spend typically goes to low-intent audiences or customers who've already converted. In programmatic environments where spend scales fast, that waste scales with it."],leak1Actions:["Pull the audience definitions currently feeding your programmatic campaigns. Check how many are built from first-party behavioral and transactional data versus platform-managed signals. The gap is your Leak 01 cost.","Check whether converted customers are being suppressed across your programmatic DSP in real time. If suppression runs on a batch schedule, you're paying to reach people who already bought.","Map what signals are available in your own systems and identify what it would take to get those into your programmatic targeting."],leak1Play:"Intent-Based Targeting",leak1PlayDesc:"<p>Intent-Based Targeting builds a unified intent score from behavior across the full customer profile and activates the highest-intent audiences across every paid channel simultaneously.</p><p>Converted customers get suppressed the moment a purchase hits their profile. Every channel updates at once.</p>",leak2Title:"Cart recovery timing is leaving recoverable revenue behind",leak2Body:"<p>A shopper adds to cart. Browses a few more pages. Leaves. The recovery sequence starts whenever the batch job runs. By then, the window where an on-site intervention could have closed the sale is gone.</p><p>If every channel manages its own recovery logic, a customer who converted on Tuesday is still seeing recovery ads on Wednesday.</p>",leak2Cost:"70% of online carts are abandoned and timing is one of the most controllable drivers. The first 30 minutes are the highest-conversion window. Most systems miss it.",leak2CostBullets:["70% of online carts are abandoned, and timing is one of the most controllable drivers.","Real-time cross-channel recovery consistently outperforms delayed single-channel approaches.","The first 30 minutes are the highest-conversion window. Most systems miss it."],leak2Actions:["Time the gap between a cart abandonment event and your first recovery touchpoint. If it's longer than 30 minutes, the highest-conversion window is gone.","Check if your recovery sequence can intervene on-site before a shopper leaves. If the answer is no, anonymous high-intent visitors leave without a recovery play.","Map what happens across channels the moment a purchase occurs. If each platform manages its own suppression list, customers receive recovery messages after they've already checked out."],leak2Play:"Abandoned Cart Recovery",leak2PlayDesc:"<p>Abandoned Cart Recovery detects abandonment the moment a session ends without an order and determines the right intervention.</p><p>Autonomous decisioning figures out whether an incentive is actually needed or whether a reminder is enough. When a purchase happens, suppression fires across every channel simultaneously.</p>"},
+P08:{subhead:"Two leaks found across your media spend and retargeting strategy",leak1Title:"Siloed audience data is leaving money behind across every channel",leak1Body:"<p>Heavy investment in retail media means reaching shoppers inside environments where the platform owns the audience data. You can target. You can optimize. What you can't do is take what you learn and use it anywhere else. The intelligence stays inside the retailer's walls.</p><p>Meanwhile, every other channel is building its own version of who your best customers are from its own incomplete signals. First-party customer intelligence, sitting in your own systems, powers none of it.</p>",leak1Cost:"26% of digital ad spend is wasted due to poor targeting and data quality. Siloed audience intelligence across channels is a direct contributor. At $400k in monthly spend, that's $104k in waste per month. And there's a second leak compounding it.",leak1CostBullets:["26% of digital ad spend is wasted due to poor targeting and data quality. Siloed audience intelligence across channels is a direct contributor.","At $400k in monthly spend, that's $104k in waste per month before accounting for the compounding cost of every platform optimizing toward a different customer profile."],leak1Actions:["Map every active paid channel and identify which ones are receiving first-party audience data from your own systems.","Check whether the same high-value customer definition is feeding your retail media campaigns and your other paid channels simultaneously. If each channel has a different definition, you're not running a coordinated strategy.","Pull CAC by channel for the last 90 days. If performance varies significantly across channels running similar objectives, fragmented audience intelligence is likely a contributing factor."],leak1Play:"Lookalike Audience Expansion",leak1PlayDesc:"<p>Lookalike Audience Expansion scores your full customer base against behavioral, transactional, and declared data to build a high-precision seed audience, then pushes it to every ad platform simultaneously. No manual exports. No stale lists.</p><p>When conversions come in, the model retrains. Customers are suppressed automatically across every channel the moment a purchase hits their profile.</p>",leak2Title:"Suppression gaps are costing you on already-converted customers",leak2Body:"<p>When paid social, retail media, programmatic, and search all operate independently, there's no unified view of what a given customer has already done. Someone converts on your site. Meta doesn't know yet. Your DSP doesn't know yet. Your retail media network definitely doesn't know yet. The ads keep running.</p><p>Channel siloing drives campaigns that actively work against each other.</p>",leak2Cost:"15-30% of retargeting spend typically goes to low-intent audiences or customers who've already converted. At $250k in monthly retargeting spend, that's up to $75k wasted every month on people who already bought.",leak2CostBullets:["15-30% of retargeting spend typically goes to low-intent audiences or customers who've already converted.","At $250k in monthly retargeting spend, that's up to $75k wasted every month on people who already bought."],leak2Actions:["Check how long it takes a purchase event to suppress a customer across every active paid channel. If the answer varies by channel or exceeds 24 hours anywhere, converted customers are still in your retargeting pool.","Pull the overlap between your retargeting audiences and your recent purchaser list. If recently converted customers appear in both, suppression gaps are costing you.","Map how many separate suppression lists exist across your paid channels and how each one gets updated. If the answer involves manual exports or platform-specific processes, real-time suppression isn't happening."],leak2Play:"Intent-Based Targeting",leak2PlayDesc:"<p>Intent-Based Targeting builds a unified intent score from behavior across the full customer profile and activates the highest-intent audiences across every paid channel simultaneously.</p><p>Converted customers get suppressed the moment a purchase hits their profile. Every channel updates at once.</p>"},
+P09:{subhead:"Two leaks found across your paid media strategy and cart recovery",leak1Title:"Audience seed quality is costing you across every platform",leak1Body:"<p>Spending across a mix of channels with platform-native audiences means every platform is building its own version of who your best customers are. Meta has one read. Google has another. None of them are working from your actual customer intelligence. They're working from whatever signals they can see inside their own walls.</p><p>The result is inconsistent performance across channels with no clean way to diagnose what's actually working.</p>",leak1Cost:"Lookalike audiences built on platform signals underperform first-party based seeds by 30-40% on match quality. 26% of digital ad spend is wasted due to poor targeting and data quality. Running platform-native audiences across multiple channels compounds that waste. And there's a second leak compounding it.",leak1CostBullets:["Lookalike audiences built on platform signals underperform first-party based seeds by 30-40% on match quality.","26% of digital ad spend is wasted due to poor targeting and data quality. Running platform-native audiences across multiple channels compounds that waste across every campaign simultaneously."],leak1Actions:["Pull your top 10% of customers by LTV. Is that profile what your ad platforms receive as a seed?","Time how long it takes a conversion event to suppress a customer across every active paid channel simultaneously. If the answer varies by platform, every channel is running on a different schedule.","Map how many platforms are running campaigns right now and how many get the same audience definition. If the answer is none or inconsistent, every platform is building its own version of who your best customers are."],leak1Play:"Lookalike Audience Expansion",leak1PlayDesc:"<p>Lookalike Audience Expansion scores your full customer base against behavioral, transactional, and declared data to build a high-precision seed audience, then pushes it to every ad platform simultaneously. No manual exports. No stale lists.</p><p>When conversions come in, the model retrains. Customers are suppressed automatically across every channel the moment a purchase hits their profile.</p>",leak2Title:"Cart recovery timing is leaving recoverable revenue behind",leak2Body:"<p>A shopper adds to cart. Browses a few more pages. Leaves. The recovery sequence starts whenever the batch job runs. By then, the window where an on-site intervention could have closed the sale is gone.</p><p>If every channel manages its own recovery logic, a customer who converted on Tuesday is still seeing recovery ads on Wednesday.</p>",leak2Cost:"70% of online carts are abandoned and timing is one of the most controllable drivers. The first 30 minutes are the highest-conversion window. Most systems miss it.",leak2CostBullets:["70% of online carts are abandoned, and timing is one of the most controllable drivers.","Real-time cross-channel recovery consistently outperforms delayed single-channel approaches.","The first 30 minutes are the highest-conversion window. Most systems miss it."],leak2Actions:["Time the gap between a cart abandonment event and your first recovery touchpoint. If it's longer than 30 minutes, the highest-conversion window is gone.","Check if your recovery sequence can intervene on-site before a shopper leaves. If the answer is no, anonymous high-intent visitors leave without a recovery play.","Map what happens across channels the moment a purchase occurs. If each platform manages its own suppression list, customers receive recovery messages after they've already checked out."],leak2Play:"Abandoned Cart Recovery",leak2PlayDesc:"<p>Abandoned Cart Recovery detects abandonment the moment a session ends without an order and determines the right intervention.</p><p>Autonomous decisioning figures out whether an incentive is actually needed or whether a reminder is enough. When a purchase happens, suppression fires across every channel simultaneously.</p>"},
+P10:{subhead:"Two leaks found across your paid media strategy and cart recovery",leak1Title:"Fragmented audience data is working against paid performance",leak1Body:"<p>A mix of channels with a mix of audience approaches sounds like coverage. In practice, each platform is working from a different version of who your best customers are. Some channels get CRM uploads. Some get whatever the platform decides. None of them are working from the same signal at the same time.</p><p>You're not running a coordinated audience strategy. You're running several disconnected ones and hoping the aggregate works out.</p>",leak1Cost:"26% of digital ad spend is wasted due to poor targeting and data quality. Fragmented audience definitions across channels are a direct contributor. When every platform optimizes for a different audience definition, you can't isolate what's actually working or fix what isn't. And there's a second leak compounding it.",leak1CostBullets:["26% of digital ad spend is wasted due to poor targeting and data quality. Fragmented audience definitions across channels are a direct contributor.","When every platform optimizes for a different audience definition, you can't isolate what's actually working or fix what isn't."],leak1Actions:["Pull your current audience definitions across every active paid channel. Check how many share the same source data.","Compare CAC across channels running coordinated audience definitions versus channels running independently. That gap is your Leak 01 cost.","Map what it would take to push one consistent high-value audience definition to every platform simultaneously. If the answer involves separate uploads, separate logins, and separate schedules, fragmentation will persist."],leak1Play:"Intent-Based Targeting",leak1PlayDesc:"<p>Intent-Based Targeting builds a unified intent score from behavior across the full customer profile and activates the highest-intent audiences across every paid channel simultaneously.</p><p>Converted customers get suppressed the moment a purchase hits their profile. Every channel updates at once.</p>",leak2Title:"Cart recovery timing is costing you recoverable revenue",leak2Body:"<p>A shopper adds to cart. Browses a few more pages. Leaves. The recovery sequence starts whenever the batch job runs. By then, the window where an on-site intervention could have closed the sale is gone.</p><p>If every channel manages its own recovery logic, a customer who converted on Tuesday is still seeing recovery ads on Wednesday.</p>",leak2Cost:"70% of online carts are abandoned and timing is one of the most controllable drivers. The first 30 minutes are the highest-conversion window. Most systems miss it.",leak2CostBullets:["70% of online carts are abandoned, and timing is one of the most controllable drivers.","Real-time cross-channel recovery consistently outperforms delayed single-channel approaches.","The first 30 minutes are the highest-conversion window. Most systems miss it."],leak2Actions:["Time the gap between a cart abandonment event and your first recovery touchpoint. If it's longer than 30 minutes, the highest-conversion window is gone.","Check if your recovery sequence can intervene on-site before a shopper leaves. If the answer is no, anonymous high-intent visitors leave without a recovery play.","Map what happens across channels the moment a purchase occurs. If each platform manages its own suppression list, customers receive recovery messages after they've already checked out."],leak2Play:"Abandoned Cart Recovery",leak2PlayDesc:"<p>Abandoned Cart Recovery detects abandonment the moment a session ends without an order and determines the right intervention.</p><p>Autonomous decisioning figures out whether an incentive is actually needed or whether a reminder is enough. When a purchase happens, suppression fires across every channel simultaneously.</p>"},
+P11:{subhead:"Two leaks found across your paid media strategy and first-purchase conversion",leak1Title:"Ad spend is leaving money behind before the first purchase",leak1Body:"<p>Spending across a mix of channels with no custom audience strategy means every platform makes every targeting decision from its own data. There's no first-party intelligence informing who sees your ads, no unified definition of who your best customers are, and no consistent signal flowing across channels simultaneously.</p><p>Every platform is guessing independently. And you're funding all of them.</p>",leak1Cost:"26% of digital ad spend is wasted due to poor targeting and data quality. With no custom audiences in place, that waste runs across every channel simultaneously. At $400k in monthly spend, that's $104k in waste per month. And there's a second leak compounding it.",leak1CostBullets:["26% of digital ad spend is wasted due to poor targeting and data quality. With no custom audiences in place, that waste runs across every channel simultaneously.","At $400k in monthly spend, that's $104k in waste per month before accounting for the compounding cost of every platform optimizing toward a different customer profile."],leak1Actions:["Pull your highest-LTV customers from the last 90 days. Check whether anything resembling that profile is informing your current targeting across any active channel.","Compare CVR across any campaigns where you've had input on audience definition versus campaigns running on fully platform-managed targeting. That gap is your cost.","Map what first-party data exists in your systems right now and identify what it would take to get it into your ad platforms consistently. If the answer involves multiple teams and a project timeline, the gap will stay open."],leak1Play:"Lookalike Audience Expansion",leak1PlayDesc:"<p>Lookalike Audience Expansion scores your full customer base against behavioral, transactional, and declared data to build a high-precision seed audience, then pushes it to every ad platform simultaneously. No manual exports. No stale lists.</p><p>When conversions come in, the model retrains. Customers are suppressed automatically across every channel the moment a purchase hits their profile.</p>",leak2Title:"High-intent visitors are costing you on every unconverted session",leak2Body:"<p>Traffic is coming in across multiple channels. Some of it is genuinely close to converting. But there's no recovery play waiting for them. The session ends. They leave. Nothing follows them.</p><p>With no systematic recovery in place, every high-intent visitor who doesn't convert on the first visit is a sunk acquisition cost with no second chance built in.</p>",leak2Cost:"Most commerce sites convert 2-4% of visitors. The other 96-98% leave without purchasing. Engaged pre-purchase visitors are among the highest-margin conversion opportunities in the funnel. Right now, they're leaving without a play.",leak2CostBullets:["Most commerce sites convert 2-4% of visitors. The other 96-98% leave without purchasing.","Engaged pre-purchase visitors are among the highest-margin conversion opportunities in the funnel. Right now, they're leaving without a play."],leak2Actions:["Pull site sessions from the last 30 days and filter for visitors with three or more product page views who didn't convert. That's your highest-priority unconverted segment.","Check what recovery plays are currently active for anonymous visitors who haven't identified themselves. If the answer is nothing, that entire segment leaves with no intervention behind them.","Map the average time between a visitor's first high-intent signal and your first recovery touchpoint. If recovery only starts after email capture, the in-session window is gone before anything fires."],leak2Play:"First-Purchase Acceleration",leak2PlayDesc:"<p>First-Purchase Acceleration identifies high-engagement pre-purchase visitors in real time and delivers the right intervention during the session without requiring an email address. The decisioning evaluates which intervention fits.</p><p>When a visitor converts, their full pre-purchase behavioral history merges into their identified profile immediately.</p>"},
+P12:{subhead:"Two potential opportunities found across your checkout experience and repeat purchase strategy",leak1Title:"Checkout revenue potential may be leaving money behind every session",leak1Body:"<p>Your acquisition foundation is solid. Traffic is converting, recovery is coordinated, and audiences are informed. The next performance gap shows up inside the transaction itself. Shoppers are converting, but the value of each session isn't being fully captured.</p><p>A first-time buyer and a loyal returning customer aren't the same shopper, but they're often seeing the same recommendations. Generic cross-sell logic leaves in-session revenue on the table every time a cart closes.</p>",leak1Cost:"Industry studies show single-item orders represent 60-70% of ecommerce transactions. At 50k monthly orders and an $80 AOV, if just 10% of single-item orders added a $20 complementary product, that's $65k in additional monthly revenue sitting inside sessions that are already converting. And there's a second opportunity waiting.",leak1CostBullets:["Industry studies show single-item orders represent 60-70% of ecommerce transactions.","At 50k monthly orders and an $80 AOV, if just 10% of single-item orders added a $20 complementary product that's $65k in additional monthly revenue sitting inside sessions that are already converting."],leak1Actions:["Pull your single-item order rate for the last 90 days. If 60% or more of orders contain only one item, in-session expansion has room to grow.","Check whether your current recommendation logic pulls from the full customer profile or from product-level rules alone. That distinction determines real relevance.","Map what happens to a cross-sell recommendation after a shopper leaves without adding the item. If the answer is nothing, the in-session miss becomes a permanent one."],leak1Play:"Order Value Expansion",leak1PlayDesc:"<p>Order Value Expansion pulls the full customer profile into every recommendation, then surfaces the most relevant add-on or bundle during the session. Recommendations update in real time as the shopper moves through it.</p><p>When a shopper leaves without adding the recommended item, follow-up carries the same intelligence into email or push. No separate rule set. No starting over.</p>",leak2Title:"Repeat purchase timing may be working against customer retention",leak2Body:"<p>The first purchase happened. That's the hard part. The gap is what comes next. For products with a natural consumption cycle, the repeat purchase is predictable, but only if the timing is right. A fixed 30-day reminder doesn't account for the customer who uses a product in three weeks or the one who stocks up and won't need it for two months.</p><p>When the reminder arrives at the wrong moment, it gets ignored. And some of those customers have already reordered somewhere else.</p>",leak2Cost:"Across commerce, average repeat purchase rates range from 15-30%, meaning most brands lose 70-85% of customers after the first order. For products purchased 3-4 times per year, missed replenishment timing compounds to $1.1M-$1.5M in annual lost revenue for every 7,500 customers who don't get the right prompt at the right moment.",leak2CostBullets:["Across commerce, average repeat purchase rates range from 15-30%, meaning most brands lose 70-85% of customers after the first order.","For products purchased 3-4 times per year, missed replenishment timing compounds to $1.1M-$1.5M in annual lost revenue for every 7,500 customers who don't get the right prompt at the right moment."],leak2Actions:["Pull your repeat purchase rate for your top product categories. If it's below 25%, replenishment timing is likely a contributing factor.","Check the average time between first and second purchase for your highest-LTV customers versus customers who never bought again. The gap between those two numbers shows how much timing variance exists in your current base.","Map how your current replenishment reminders are triggered. If the answer is a fixed post-purchase delay, timing is based on a product average."],leak2Play:"Smart Replenishment & Upselling",leak2PlayDesc:"<p>Smart Replenishment & Upselling predicts each customer's individual reorder window from their actual purchase cadence. When a customer approaches their window, the play triggers through whatever channel they're most responsive to with the right message: a simple reminder, a subscription offer, an upgrade, or a bundle.</p><p>If a product is out of stock, the reminder suppresses and routes to an alternative instead. Timing predictions improve with every replenishment cycle.</p>"}
+};
+
+function getPatternKey(ans){
+  const q1=ans[0],q2=ans[1],q3=ans[2];
+  if(q3===0)return'P12';
+  if(q1===2)return'P07';
+  if(q1===3)return'P08';
+  if(q1===0){if(q2===0)return'P01';if(q2===1)return'P02';if(q2===2)return'P03';if(q2===3)return'P04';}
+  if(q1===1){if(q2===0)return'P05';if(q2===1)return'P06';if(q2===2)return'P03';if(q2===3)return'P04';}
+  if(q1===4){if(q2===0)return'P09';if(q2===1)return'P10';if(q2===2)return'P11';if(q2===3)return'P10';}
+  return'P01';
+}
+
+function getUTMs(){const p=new URLSearchParams(window.location.search);return{utm_source:p.get('utm_source')||'',utm_medium:p.get('utm_medium')||'',utm_campaign:p.get('utm_campaign')||'',utm_content:p.get('utm_content')||''};}
+function buildResultsURL(a){return window.location.href.split('?')[0].replace(/[^\/]*\.html$/,'')+'report.html?r='+a.map(n=>n+1).join('');}
+
+function checkResultsURL(){
+  const p=new URLSearchParams(window.location.search),r=p.get('r');
+  if(r&&r.length===5){const ans=r.split('').map(n=>parseInt(n)-1);if(ans.every(n=>!isNaN(n))){userAnswers=ans;showGate();return true;}}
+  return false;
+}
+
+let current=0,userAnswers=[];
+
+function initLeakWord(){
+  const wrap=document.getElementById('leak-wrap');if(!wrap)return;
+  wrap.innerHTML='';
+  'leak.'.split('').forEach(ch=>{const s=document.createElement('span');s.className='leak-letter';s.textContent=ch;wrap.appendChild(s);});
+  setTimeout(()=>{
+    const letters=wrap.querySelectorAll('.leak-letter');
+    letters.forEach((l,i)=>{const dd=i*160,dur=700+i*100;l.style.transition=`transform ${dur}ms cubic-bezier(.4,0,.8,.6) ${dd}ms,opacity ${dur*.7}ms ease ${dd}ms`;setTimeout(()=>{l.style.transform='translateY(140px)';l.style.opacity='0';},10);});
+    const tf=letters.length*160+800;
+    setTimeout(()=>{letters.forEach((l,i)=>{l.style.transition='none';l.style.transform='translateY(0)';l.style.opacity='0';requestAnimationFrame(()=>requestAnimationFrame(()=>{l.style.transition=`opacity 900ms ease ${i*100}ms`;l.style.opacity='1';}));});},tf);
+  },1500);
+}
+
+function typeInto(el,text,cb){
+  el.innerHTML='';let i=0;
+  const iv=setInterval(()=>{el.innerHTML=text.slice(0,i)+'<span class="cursor-script"></span>';i++;if(i>text.length){clearInterval(iv);el.innerHTML=text;if(cb)setTimeout(cb,400);}},65);
+}
+
+function renderQ(){
+  window.scrollTo({top:0,behavior:'smooth'});
+  const q=questions[current];
+  document.getElementById('quiz').setAttribute('data-q',current);
+  document.getElementById('prog-fill').style.width=((current+1)/5*100)+'%';
+  document.getElementById('prog-label').textContent=(current+1)+' of 5';
+  document.getElementById('back-btn').style.visibility=current>0?'visible':'hidden';
+  const hasOdd=q.answers.length%2!==0;
+  const cont=document.getElementById('q-container');
+  cont.innerHTML=`<div class="q-category-wrap"><span class="q-category-large" id="q-cat-el"></span></div><div class="scenario-card" id="scenario-card" style="opacity:0;transition:opacity .5s ease;"><div class="q-text">${q.text}</div><div class="q-prompt" id="q-prompt-el">${q.prompt}</div></div><div class="answer-grid${hasOdd?' span-last':''}" id="answers-grid" style="opacity:0;transition:opacity .5s ease;pointer-events:none;"></div>`;
+  const grid=document.getElementById('answers-grid');
+  const hasSel=userAnswers[current]!==undefined;
+  if(hasSel)grid.classList.add('has-selection');
+  q.answers.forEach((a,i)=>{
+    const card=document.createElement('div');card.className='acard';card.style.animation=`cardRise .55s ease ${.06+i*.09}s both`;
+    if(userAnswers[current]===i)card.classList.add('selected');
+    const tags=a.tags&&a.tags.length?`<div class="acard-tags">${a.tags.map(t=>`<span class="acard-tag">${t}</span>`).join('')}</div>`:'';
+    card.innerHTML=`<div class="acard-emoji-wrap"><div class="acard-emoji">${a.emoji||''}</div></div><div class="acard-body"><div class="acard-title">${a.text}</div><div class="acard-desc">${a.desc||''}</div>${tags}</div>`;
+    card.addEventListener('click',()=>selectAnswer(i));grid.appendChild(card);
+  });
+  typeInto(document.getElementById('q-cat-el'),q.category,()=>{
+    const sc=document.getElementById('scenario-card');if(sc){sc.style.opacity='1';setTimeout(()=>{const pr=document.getElementById('q-prompt-el');if(pr)pr.classList.add('visible');setTimeout(()=>{const g=document.getElementById('answers-grid');if(g){g.style.opacity='1';g.style.pointerEvents='';}},350);},250);}
+  });
+}
+
+function selectAnswer(i){
+  userAnswers[current]=i;
+  const grid=document.getElementById('answers-grid');grid.classList.add('has-selection');
+  document.querySelectorAll('.acard').forEach((c,idx)=>{c.classList.toggle('selected',idx===i);if(idx===i){c.classList.remove('shimmer-active');void c.offsetWidth;c.classList.add('shimmer-active');}});
+  setTimeout(()=>{if(current<4){current++;renderQ();}else showGate();},650);
+}
+
+function prevQ(){if(current>0){current--;renderQ();}}
+function startQuiz(){document.getElementById('landing').classList.remove('active');document.getElementById('quiz').classList.add('active');renderQ();setTimeout(()=>drawStaticDots('quiz-canvas'),50);}
+
+function showGate(){
+  document.getElementById('quiz').classList.remove('active');
+  document.getElementById('gate').classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+  const key=getPatternKey(userAnswers),p=patterns[key];
+  document.getElementById('gate-leak1-title').textContent=p.leak1Title;
+  document.getElementById('gate-leak1-body').innerHTML=p.leak1Body;
+  document.getElementById('gate-leak1-cost').textContent=p.leak1Cost;
+  document.getElementById('gate-leak2-title-blur').textContent=p.leak2Title;
+  document.getElementById('gate-leak2-body-blur').innerHTML=p.leak2Body;
+  document.getElementById('gate-leak2-cost-blur').textContent=p.leak2Cost;
+  window._resultsURL=buildResultsURL(userAnswers);
+  window._patternKey=key;
+  window._patterns=patterns;
+  window._answerLabels=userAnswers.map((a,i)=>questions[i]&&questions[i].answers[a]?questions[i].answers[a].text:'');
+  window._utms=getUTMs();
+  setTimeout(()=>drawStaticDots('gate-canvas'),50);
+}
+
+function openModal(){document.getElementById('modal-overlay').classList.add('open');document.body.style.overflow='hidden';}
+function closeModal(){document.getElementById('modal-overlay').classList.remove('open');document.body.style.overflow='';}
+function closeModalOutside(e){if(e.target===document.getElementById('modal-overlay'))closeModal();}
+
+const _dF={};
+function _bPt(SP,t){const mt=1-t,mt2=mt*mt,mt3=mt2*mt,t2=t*t,t3=t2*t;return{x:mt3*SP.p0[0]+3*mt2*t*SP.cp1[0]+3*mt*t2*SP.cp2[0]+t3*SP.p3[0],y:mt3*SP.p0[1]+3*mt2*t*SP.cp1[1]+3*mt*t2*SP.cp2[1]+t3*SP.p3[1]};}
+function _bTan(SP,t){const mt=1-t;const dx=3*(mt*mt*(SP.cp1[0]-SP.p0[0])+2*mt*t*(SP.cp2[0]-SP.cp1[0])+t*t*(SP.p3[0]-SP.cp2[0]));const dy=3*(mt*mt*(SP.cp1[1]-SP.p0[1])+2*mt*t*(SP.cp2[1]-SP.cp1[1])+t*t*(SP.p3[1]-SP.cp2[1]));const len=Math.sqrt(dx*dx+dy*dy)||1;return{tx:dx/len,ty:dy/len};}
+function _bNorm(SP,t){const{tx,ty}=_bTan(SP,t);return{nx:-ty,ny:tx};}
+function _col(t){if(t<.14)return Math.random()<.5?'#FF68E9':'#F58AE8';if(t<.28)return Math.random()<.5?'#FF9F45':'#FFB347';if(t<.42)return Math.random()<.5?'#FFE04B':'#C8F56A';if(t<.58)return Math.random()<.5?'#0CC2FF':'#7FE7C1';if(t<.74)return Math.random()<.5?'#38BDF8':'#0CC2FF';return Math.random()<.5?'#8C78FF':'#6F8CFF';}
+
+function drawDots(id){
+  const canvas=document.getElementById(id);if(!canvas)return;
+  const par=canvas.parentElement;canvas.width=Math.max(par.offsetWidth||0,window.innerWidth);canvas.height=Math.max(par.offsetHeight||0,window.innerHeight);
+  if(_dF[id])cancelAnimationFrame(_dF[id].raf);
+  const W=canvas.width,H=canvas.height,ctx=canvas.getContext('2d');
+  const SP={p0:[0,H*.62],cp1:[W*.20,H*.48],cp2:[W*.62,H*.68],p3:[W,H*.54]};
+  function mkP(layer){
+    let bt;if(Math.random()<.44){bt=Math.random()<.5?Math.random()*.22:.78+Math.random()*.22;}else{bt=.18+Math.random()*.64;}
+    const iO=bt<.25||bt>.75,iM=bt>.35&&bt<.65;
+    let sm;if(layer==='spine')sm=iO?12:6;if(layer==='signal')sm=iO?50:(iM?18:32);if(layer==='bloom')sm=iO?80:40;
+    const no=(Math.random()-.5)*2*sm;
+    let r;if(layer==='spine')r=.8+Math.random()*.9;if(layer==='signal')r=(iO?1.4:1)+Math.random()*(iO?1.4:1);if(layer==='bloom')r=1.8+Math.random()*2.2;
+    let ba;if(layer==='spine')ba=.45+Math.random()*.30;if(layer==='signal')ba=iO?.38+Math.random()*.28:.24+Math.random()*.22;if(layer==='bloom')ba=iO?.28+Math.random()*.24:.14+Math.random()*.14;
+    const sb=Math.random();const st=sb<.33?.000012+Math.random()*.000008:sb<.66?.000026+Math.random()*.000016:.000045+Math.random()*.000025;
+    const oa=layer==='bloom'?8+Math.random()*12:3+Math.random()*6,of=.0007+Math.random()*.001,wp=2+Math.random()*4;
+    const ho=layer==='signal'&&Math.random()<.35,amp=ho?4+Math.random()*7:0,freq=.0005+Math.random()*.0009;
+    return{bt,st,no,r,col:_col(bt),ba,ph:Math.random()*Math.PI*2,oa,of,wp,ho,amp,freq,op:Math.random()*Math.PI*2,layer};
+  }
+  const parts=[];
+  [{l:'spine',n:70},{l:'signal',n:180},{l:'bloom',n:90}].forEach(({l,n})=>{for(let i=0;i<n;i++)parts.push(mkP(l));});
+  function drawCurve(p1T,p2T){
+    ctx.save();ctx.beginPath();ctx.moveTo(SP.p0[0],SP.p0[1]);ctx.bezierCurveTo(SP.cp1[0],SP.cp1[1],SP.cp2[0],SP.cp2[1],SP.p3[0],SP.p3[1]);ctx.shadowColor='rgba(12,194,255,0.5)';ctx.shadowBlur=12;ctx.strokeStyle='rgba(12,194,255,0.18)';ctx.lineWidth=8;ctx.globalAlpha=1;ctx.stroke();ctx.restore();
+    const lg=ctx.createLinearGradient(SP.p0[0],0,SP.p3[0],0);lg.addColorStop(0,'rgba(255,104,233,0.70)');lg.addColorStop(.22,'rgba(255,200,60,0.55)');lg.addColorStop(.45,'rgba(12,194,255,0.65)');lg.addColorStop(.72,'rgba(12,194,255,0.55)');lg.addColorStop(1,'rgba(140,120,255,0.68)');
+    ctx.beginPath();ctx.moveTo(SP.p0[0],SP.p0[1]);ctx.bezierCurveTo(SP.cp1[0],SP.cp1[1],SP.cp2[0],SP.cp2[1],SP.p3[0],SP.p3[1]);ctx.strokeStyle=lg;ctx.lineWidth=1.5;ctx.globalAlpha=.55;ctx.stroke();ctx.globalAlpha=1;
+    [p1T,p2T].forEach(pT=>{const S=28,ha=.09;ctx.save();ctx.beginPath();for(let s=0;s<=S;s++){const st=Math.max(0,Math.min(1,pT-ha+s*(ha*2/S)));const p=_bPt(SP,st);s===0?ctx.moveTo(p.x,p.y):ctx.lineTo(p.x,p.y);}const pc=pT<.33?'rgba(255,220,60,1)':pT<.66?'rgba(12,194,255,1)':'rgba(180,150,255,1)';ctx.strokeStyle=pc;ctx.shadowColor=pc;ctx.shadowBlur=8;ctx.lineWidth=2.5;ctx.globalAlpha=.65;ctx.stroke();ctx.restore();});
+  }
+  let st0=null;
+  function frame(ts){
+    if(!st0)st0=ts;const T=ts-st0;ctx.clearRect(0,0,W,H);
+    const p1=(T*.000065)%1,p2=(T*.000065+.48)%1;drawCurve(p1,p2);
+    parts.forEach(p=>{
+      if(p.layer==='spine')return;
+      const t=(p.bt+T*p.st)%1;const pt=_bPt(SP,t);const{tx,ty}=_bTan(SP,t);const{nx,ny}=_bNorm(SP,t);
+      const roll=Math.sin(T*p.of+p.ph+t*p.wp)*p.oa;let ox=0,oy=0;
+      if(p.ho){const op=T*p.freq+p.op;ox=nx*Math.cos(op)*p.amp+tx*Math.sin(op)*p.amp*.5;oy=ny*Math.cos(op)*p.amp+ty*Math.sin(op)*p.amp*.5;}
+      const px=pt.x+nx*(p.no+roll)+ox,py=pt.y+ny*(p.no+roll)+oy;
+      const d1=Math.abs(t-p1),d2=Math.abs(t-p2),dist=Math.min(d1,1-d1,d2,1-d2),pi=Math.exp(-(dist*dist)/.004);
+      ctx.shadowColor=p.col;ctx.shadowBlur=6;ctx.globalAlpha=Math.min(p.ba*.55*(1+pi),.55);ctx.fillStyle=p.col;ctx.beginPath();ctx.arc(px,py,p.r*(1+pi*.4)*2,0,Math.PI*2);ctx.fill();
+    });
+    ctx.shadowBlur=0;
+    parts.forEach(p=>{
+      const t=(p.bt+T*p.st)%1;const pt=_bPt(SP,t);const{tx,ty}=_bTan(SP,t);const{nx,ny}=_bNorm(SP,t);
+      const roll=Math.sin(T*p.of+p.ph+t*p.wp)*p.oa;let ox=0,oy=0;
+      if(p.ho){const op=T*p.freq+p.op;ox=nx*Math.cos(op)*p.amp+tx*Math.sin(op)*p.amp*.5;oy=ny*Math.cos(op)*p.amp+ty*Math.sin(op)*p.amp*.5;}
+      const px=pt.x+nx*(p.no+roll)+ox,py=pt.y+ny*(p.no+roll)+oy;
+      const d1=Math.abs(t-p1),d2=Math.abs(t-p2),dist=Math.min(d1,1-d1,d2,1-d2),pi=Math.exp(-(dist*dist)/.004);
+      ctx.globalAlpha=Math.min(p.ba+pi*.32,.82);ctx.fillStyle=p.col;ctx.beginPath();ctx.arc(px,py,p.r*(1+pi*.35),0,Math.PI*2);ctx.fill();
+    });
+    ctx.globalAlpha=1;_dF[id].raf=requestAnimationFrame(frame);
+  }
+  _dF[id]={raf:null};_dF[id].raf=requestAnimationFrame(frame);
+}
+
+function drawStaticDots(id){
+  const canvas=document.getElementById(id);if(!canvas)return;
+  canvas.width=window.innerWidth;canvas.height=window.innerHeight;
+  if(_dF[id])cancelAnimationFrame(_dF[id].raf);
+  const W=canvas.width,H=canvas.height,ctx=canvas.getContext('2d');
+  const SP={p0:[0,H*.58],cp1:[W*.20,H*.44],cp2:[W*.62,H*.64],p3:[W,H*.50]};
+  function mkP(layer){
+    let bt;if(Math.random()<.44){bt=Math.random()<.5?Math.random()*.22:.78+Math.random()*.22;}else{bt=.18+Math.random()*.64;}
+    const iO=bt<.25||bt>.75,iM=bt>.35&&bt<.65;
+    let sm;if(layer==='spine')sm=iO?12:6;if(layer==='signal')sm=iO?50:(iM?18:32);if(layer==='bloom')sm=iO?80:40;
+    const no=(Math.random()-.5)*2*sm;
+    let r;if(layer==='spine')r=.8+Math.random()*.9;if(layer==='signal')r=(iO?1.4:1)+Math.random()*(iO?1.4:1);if(layer==='bloom')r=1.8+Math.random()*2.2;
+    let ba;if(layer==='spine')ba=.45+Math.random()*.30;if(layer==='signal')ba=iO?.38+Math.random()*.28:.24+Math.random()*.22;if(layer==='bloom')ba=iO?.28+Math.random()*.24:.14+Math.random()*.14;
+    const sb=Math.random();const st=sb<.33?.000012+Math.random()*.000008:sb<.66?.000026+Math.random()*.000016:.000045+Math.random()*.000025;
+    const oa=layer==='bloom'?8+Math.random()*12:3+Math.random()*6,of=.0007+Math.random()*.001,wp=2+Math.random()*4;
+    const ho=layer==='signal'&&Math.random()<.35,amp=ho?4+Math.random()*7:0,freq=.0005+Math.random()*.0009;
+    return{bt,st,no,r,col:_col(bt),ba,ph:Math.random()*Math.PI*2,oa,of,wp,ho,amp,freq,op:Math.random()*Math.PI*2,layer};
+  }
+  const parts=[];
+  [{l:'spine',n:70},{l:'signal',n:180},{l:'bloom',n:90}].forEach(({l,n})=>{for(let i=0;i<n;i++)parts.push(mkP(l));});
+  let st0=null;
+  function frame(ts){
+    if(!st0)st0=ts;const T=ts-st0;ctx.clearRect(0,0,W,H);
+    parts.forEach(p=>{
+      const t=(p.bt+T*p.st)%1;const pt=_bPt(SP,t);const{tx,ty}=_bTan(SP,t);const{nx,ny}=_bNorm(SP,t);
+      const roll=Math.sin(T*p.of+p.ph+t*p.wp)*p.oa;let ox=0,oy=0;
+      if(p.ho){const op=T*p.freq+p.op;ox=nx*Math.cos(op)*p.amp+tx*Math.sin(op)*p.amp*.5;oy=ny*Math.cos(op)*p.amp+ty*Math.sin(op)*p.amp*.5;}
+      const px=pt.x+nx*(p.no+roll)+ox,py=pt.y+ny*(p.no+roll)+oy;
+      ctx.globalAlpha=Math.min(p.ba,.75);ctx.fillStyle=p.col;ctx.beginPath();ctx.arc(px,py,p.r,0,Math.PI*2);ctx.fill();
+    });
+    ctx.globalAlpha=1;_dF[id].raf=requestAnimationFrame(frame);
+  }
+  _dF[id]={raf:null};_dF[id].raf=requestAnimationFrame(frame);
+}
+
+window.addEventListener('resize',()=>['landing-canvas','quiz-canvas','gate-canvas'].forEach(id=>{const c=document.getElementById(id);if(c&&c.parentElement.classList.contains('active')){id==='landing-canvas'?drawDots(id):drawStaticDots(id);}}));
+document.addEventListener('DOMContentLoaded',()=>{
+  if(!checkResultsURL()){initLeakWord();requestAnimationFrame(()=>requestAnimationFrame(()=>drawDots('landing-canvas')));}
+  // Initialize Marketo — retry until MktoForms2 is available
+  function initMktoForm(){
+    if(typeof MktoForms2==='undefined'){setTimeout(initMktoForm,200);return;}
+    MktoForms2.loadForm("//more.blueconic.com","358-XTM-616",1569,function(form){
+      form.onSubmit(function(){
+        const key=window._patternKey||'P01';
+        const p=window._patterns&&window._patterns[key]?window._patterns[key]:{};
+        const labels=window._answerLabels||[];
+        form.vals({
+          'quiz_pattern':key,
+          'quiz_leak_1':p.leak1Title||'',
+          'quiz_leak_2':p.leak2Title||'',
+          'quiz_plays':`${p.leak1Play||''}, ${p.leak2Play||''}`,
+          'quiz_q1':labels[0]||'',
+          'quiz_q2':labels[1]||'',
+          'quiz_q3':labels[2]||'',
+          'quiz_q4':labels[3]||'',
+          'quiz_q5':labels[4]||'',
+          'quiz_results_url':window._resultsURL||''
+        });
+      });
+      form.onSuccess(function(){
+        closeModal();
+        window.open(window._resultsURL,'_blank');
+        return false;
+      });
+    });
+  }
+  initMktoForm();
+});
+</script>
+
+<script>
+function generateReport(p,win){
+  const date=new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
+  function mkDots(isTop,count){
+    const W=780,H=90,dots=[];
+    const p0=[0,isTop?72:18],cp1=[W*.2,isTop?52:8],cp2=[W*.62,isTop?78:28],p3=[W,isTop?62:12];
+    function bpt(t){const mt=1-t,mt2=mt*mt,mt3=mt2*mt,t2=t*t,t3=t2*t;return{x:mt3*p0[0]+3*mt2*t*cp1[0]+3*mt*t2*cp2[0]+t3*p3[0],y:mt3*p0[1]+3*mt2*t*cp1[1]+3*mt*t2*cp2[1]+t3*p3[1]};}
+    function btan(t){const mt=1-t;const dx=3*(mt*mt*(cp1[0]-p0[0])+2*mt*t*(cp2[0]-cp1[0])+t*t*(p3[0]-cp2[0]));const dy=3*(mt*mt*(cp1[1]-p0[1])+2*mt*t*(cp2[1]-cp1[1])+t*t*(p3[1]-cp2[1]));const len=Math.sqrt(dx*dx+dy*dy)||1;return{tx:dx/len,ty:dy/len};}
+    for(let i=0;i<count;i++){
+      let t;if(Math.random()<.44){t=Math.random()<.5?Math.random()*.22:.78+Math.random()*.22;}else{t=.18+Math.random()*.64;}
+      const iO=t<.25||t>.75,iM=t>.35&&t<.65;
+      const sm=iO?42:(iM?14:26);const no=(Math.random()-.5)*2*sm;
+      const pt=bpt(t);const{tx,ty}=btan(t);const nx=-ty,ny=tx;
+      const x=pt.x+nx*no,y=pt.y+ny*no;
+      if(x<-4||x>W+4||y<-4||y>H+4)continue;
+      const r=iO?.9+Math.random()*1.6:.6+Math.random()*1.1;
+      const alpha=iO?.38+Math.random()*.36:.18+Math.random()*.22;
+      let col;if(t<.14)col=Math.random()<.5?'#FF68E9':'#F58AE8';else if(t<.28)col=Math.random()<.5?'#FF9F45':'#FFB347';else if(t<.42)col=Math.random()<.5?'#FFE04B':'#C8F56A';else if(t<.58)col=Math.random()<.5?'#0CC2FF':'#7FE7C1';else if(t<.74)col=Math.random()<.5?'#38BDF8':'#0CC2FF';else col=Math.random()<.5?'#8C78FF':'#6F8CFF';
+      dots.push(`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${r.toFixed(1)}" fill="${col}" opacity="${alpha.toFixed(2)}"/>`);
+    }
+    return dots.join('');
+  }
+  const td=mkDots(true,300),bd=mkDots(false,260);
+  const bHTML=(bullets,color)=>bullets.map(b=>`<li style="font-size:12px;color:#5C6E84;line-height:1.5;padding-left:14px;position:relative;margin-bottom:6px;"><span style="position:absolute;left:0;top:6px;width:5px;height:5px;border-radius:50%;background:${color};display:block;"></span>${b}</li>`).join('');
+  const aHTML=(actions,color)=>actions.map((a,i)=>`<div style="display:flex;align-items:flex-start;gap:12px;margin-bottom:10px;"><div style="width:20px;height:20px;min-width:20px;border-radius:50%;background:${color};color:#fff;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;">${i+1}</div><div style="font-size:12.5px;color:#5C6E84;line-height:1.58;">${a}</div></div>`).join('');
+  const cardHTML=(num,title,body,bullets,actions,play,playDesc,grad,color,bg)=>`
+<div style="border-radius:14px;padding:24px 28px;margin-bottom:14px;position:relative;overflow:hidden;border:1px solid rgba(11,29,58,0.08);background:${bg};">
+<div style="position:absolute;top:0;left:0;right:0;height:3px;background:${grad};"></div>
+<div style="font-size:9px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:${color};margin-bottom:8px;">${num}</div>
+<div style="font-size:18px;font-weight:700;line-height:1.25;letter-spacing:-.02em;margin-bottom:8px;">${title}</div>
+<div style="font-size:13px;color:#5C6E84;line-height:1.68;margin-bottom:16px;">${body}</div>
+<div style="border-radius:9px;padding:14px 16px;margin-bottom:16px;background:${color}0d;border:1px solid ${color}33;">
+<div style="font-size:8.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:${color};margin-bottom:8px;">The cost</div>
+<ul style="list-style:none;">${bHTML(bullets,color)}</ul>
+</div>
+<div style="font-size:8.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#9AAABB;margin-bottom:10px;margin-top:16px;">Three things to do this week</div>
+${aHTML(actions,color)}
+<div style="border-radius:9px;padding:14px 16px;margin-top:16px;background:${color}0a;border:1px solid ${color}22;">
+<div style="font-size:8.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:${color};margin-bottom:5px;">The BlueConic Growth Play that closes your leak</div>
+<div style="font-size:14px;font-weight:700;letter-spacing:-.015em;margin-bottom:6px;color:#0B1D3A;">${play}</div>
+<div style="font-size:12px;color:#5C6E84;line-height:1.62;">${playDesc}</div>
+</div>
+</div>`;
+
+  const html=`<!DOCTYPE html><html><head><meta charset="UTF-8"/><title>Your Acquisition Diagnosis — BlueConic</title>
+<style>@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Cormorant+Garamond:ital,wght@1,600&display=swap');*{box-sizing:border-box;margin:0;padding:0;}body{font-family:'Plus Jakarta Sans',sans-serif;color:#0B1D3A;background:#f0f2f6;padding:32px;-webkit-print-color-adjust:exact;print-color-adjust:exact;}.wrap{background:#fff;border-radius:20px;overflow:hidden;max-width:780px;margin:0 auto;box-shadow:0 8px 48px rgba(11,29,58,0.14);}@media print{body{background:#fff;padding:0;}.wrap{border-radius:0;box-shadow:none;max-width:100%;}@page{margin:10mm;size:A4;}}</style>
+</head><body><div class="wrap">
+<div style="background:#fff;height:90px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(11,29,58,0.06);position:relative;overflow:hidden;">
+<svg style="position:absolute;inset:0;width:100%;height:100%;" viewBox="0 0 780 90" xmlns="http://www.w3.org/2000/svg">${td}</svg>
+<div style="position:relative;z-index:2;padding-left:48px;font-family:'Plus Jakarta Sans',sans-serif;font-size:15px;font-weight:500;color:#0B1D3A;">blueconic</div>
+<div style="color:#9AAABB;font-size:11px;letter-spacing:.04em;position:relative;z-index:2;padding-right:48px;">Acquisition Pressure Test &nbsp;·&nbsp; ${date}</div>
+</div>
+<div style="padding:48px 48px 40px;border-bottom:1px solid rgba(11,29,58,0.07);background:linear-gradient(135deg,rgba(1,95,255,0.03) 0%,rgba(255,255,255,0) 60%);">
+<div style="font-size:10px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:#1FBFAB;margin-bottom:14px;display:flex;align-items:center;gap:7px;"><span style="display:inline-block;width:20px;height:2px;background:linear-gradient(90deg,#FF68E9,#015FFF);border-radius:2px;"></span>Your acquisition diagnosis</div>
+<h1 style="font-size:34px;font-weight:700;line-height:1.08;letter-spacing:-.03em;margin-bottom:10px;">Two leaks found.<br><em style="font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:600;color:#015FFF;">Here's what they're costing you.</em></h1>
+<p style="font-size:14px;color:#5C6E84;line-height:1.68;max-width:500px;">Based on your answers, we identified two leaks in your acquisition setup. This report names both, explains what each is costing you, and shows exactly how to fix them.</p>
+<div style="font-size:10px;color:#9AAABB;margin-top:18px;letter-spacing:.04em;">Generated ${date}</div>
+</div>
+<div style="padding:36px 48px;border-bottom:1px solid rgba(11,29,58,0.06);">
+<div style="font-size:9px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:#9AAABB;margin-bottom:20px;display:flex;align-items:center;gap:8px;">Your acquisition leaks<span style="flex:1;height:1px;background:rgba(11,29,58,0.07);display:block;"></span></div>
+${cardHTML('Leak 01',p.leak1Title,p.leak1Body,p.leak1CostBullets,p.leak1Actions,p.leak1Play,p.leak1PlayDesc,'linear-gradient(90deg,#015FFF,#0CC2FF,#7FE7C1)','#015FFF','linear-gradient(135deg,rgba(1,95,255,0.04) 0%,rgba(12,194,255,0.03) 100%)')}
+${cardHTML('Leak 02',p.leak2Title,p.leak2Body,p.leak2CostBullets,p.leak2Actions,p.leak2Play,p.leak2PlayDesc,'linear-gradient(90deg,#8C78FF,#FF68E9,#FF9F45)','#8C78FF','linear-gradient(135deg,rgba(140,120,255,0.05) 0%,rgba(255,104,233,0.03) 100%)')}
+</div>
+<div style="padding:36px 48px;background:linear-gradient(135deg,rgba(1,95,255,0.04) 0%,rgba(31,191,171,0.03) 100%);position:relative;">
+<div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#FF68E9,#FF9F45,#FFE04B,#7FE7C1,#0CC2FF,#8C78FF,#015FFF);"></div>
+<div style="font-size:9px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:#1FBFAB;margin-bottom:10px;">Next step</div>
+<div style="font-size:22px;font-weight:700;color:#0B1D3A;letter-spacing:-.02em;margin-bottom:10px;">Start with one sprint.</div>
+<div style="font-size:13px;color:#5C6E84;line-height:1.68;margin-bottom:20px;max-width:480px;">Run one Growth Play over 90 days, focused on a single leak in your funnel, built around your actual customer data. You'll work alongside a Forward Deployed Builder (yes, a real human!), designing and executing the play with you from start to finish with a clear, actionable metric at the end. No handoffs. No black box. Just a result you can evaluate and scale.</div>
+<a style="display:inline-flex;align-items:center;gap:8px;background:#015FFF;color:#fff;border-radius:9px;padding:11px 22px;font-size:12px;font-weight:600;text-decoration:none;" href="https://www.blueconic.com/request-demo">Talk to our team →</a>
+<div style="display:flex;margin-top:24px;border:1px solid rgba(11,29,58,0.08);border-radius:12px;overflow:hidden;background:#fff;">
+<div style="flex:1;padding:16px;text-align:center;"><div style="font-size:16px;font-weight:700;color:#0B1D3A;margin-bottom:3px;">90 days</div><div style="font-size:9px;color:#9AAABB;letter-spacing:.05em;text-transform:uppercase;">Duration</div></div>
+<div style="flex:1;padding:16px;text-align:center;border-left:1px solid rgba(11,29,58,0.06);border-right:1px solid rgba(11,29,58,0.06);"><div style="font-size:16px;font-weight:700;color:#0B1D3A;margin-bottom:3px;">1 Growth Play</div><div style="font-size:9px;color:#9AAABB;letter-spacing:.05em;text-transform:uppercase;">Scope</div></div>
+<div style="flex:1;padding:16px;text-align:center;"><div style="font-size:16px;font-weight:700;color:#0B1D3A;margin-bottom:3px;">$5k</div><div style="font-size:9px;color:#9AAABB;letter-spacing:.05em;text-transform:uppercase;">Investment</div></div>
+</div>
+</div>
+<div style="background:#fff;height:90px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid rgba(11,29,58,0.06);position:relative;overflow:hidden;">
+<svg style="position:absolute;inset:0;width:100%;height:100%;" viewBox="0 0 780 90" xmlns="http://www.w3.org/2000/svg">${bd}</svg>
+<div style="color:#5C6E84;font-size:11px;position:relative;z-index:2;padding-left:48px;">blueconic.com</div>
+<div style="display:flex;gap:10px;align-items:center;position:relative;z-index:2;padding-right:48px;">
+<button onclick="window.print()" style="background:#fff;color:#0B1D3A;border:1px solid rgba(11,29,58,0.15);border-radius:8px;padding:11px 18px;font-family:'Plus Jakarta Sans',sans-serif;font-size:12px;font-weight:600;cursor:pointer;">Save as PDF ↓</button>
+</div>
+</div>
+</div></body></html>`;
+  win.document.write(html);win.document.close();
+}
+</script>
+</body>
+</html>
