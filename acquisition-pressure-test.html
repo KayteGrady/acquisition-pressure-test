@@ -508,16 +508,16 @@ document.addEventListener('DOMContentLoaded',()=>{
         const p=window._patterns&&window._patterns[key]?window._patterns[key]:{};
         const labels=window._answerLabels||[];
         form.vals({
-          'quiz_pattern':key,
-          'quiz_leak_1':p.leak1Title||'',
-          'quiz_leak_2':p.leak2Title||'',
-          'quiz_plays':`${p.leak1Play||''}, ${p.leak2Play||''}`,
-          'quiz_q1':labels[0]||'',
-          'quiz_q2':labels[1]||'',
-          'quiz_q3':labels[2]||'',
-          'quiz_q4':labels[3]||'',
-          'quiz_q5':labels[4]||'',
-          'quiz_results_url':window._resultsURL||''
+          'Acquisition_Pressure_Test_Quiz_Pattern__c':key,
+          'Acq_Pressure_Test_Quiz_Leak_1__c':p.leak1Title||'',
+          'Acq_Pressure_Test_Quiz_Leak_2__c':p.leak2Title||'',
+          'Acq_Pressure_Test_Growth_Plays__c':`${p.leak1Play||''}, ${p.leak2Play||''}`,
+          'Acq_Pressure_Test_Question_1__c':labels[0]||'',
+          'Acq_Pressure_Test_Audience_Building__c':labels[1]||'',
+          'Acq_Pressure_Test_Intent_and_Recovery__c':labels[2]||'',
+          'Acq_Pressure_Test_Abandonment_Speed__c':labels[3]||'',
+          'Acq_Pressure_Test_Basket_Growth__c':labels[4]||'',
+          'Acq_Pressure_Test_Results_URL__c':window._resultsURL||''
         });
       });
       form.onSuccess(function(){
