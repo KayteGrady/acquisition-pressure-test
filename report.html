@@ -12,8 +12,8 @@ body{font-family:'Plus Jakarta Sans',sans-serif;color:#0B1D3A;background:#f0f2f6
 .wrap{background:#fff;border-radius:20px;overflow:hidden;max-width:780px;margin:0 auto;box-shadow:0 8px 48px rgba(11,29,58,0.14);}
 .report-header{background:#fff;height:90px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(11,29,58,0.06);position:relative;overflow:hidden;}
 .report-header svg{position:absolute;inset:0;width:100%;height:100%;}
-.header-logo{position:relative;z-index:2;padding-left:48px;font-size:15px;font-weight:500;color:#0B1D3A;}
-.header-meta{color:#9AAABB;font-size:11px;letter-spacing:.04em;position:relative;z-index:2;padding-right:48px;}
+.header-logo{position:relative;z-index:2;padding-left:32px;font-size:15px;font-weight:500;color:#0B1D3A;flex-shrink:0;}
+.header-meta{color:#9AAABB;font-size:10px;letter-spacing:.04em;position:relative;z-index:2;padding-right:32px;text-align:right;flex-shrink:0;white-space:nowrap;}
 .report-hero{padding:48px 48px 40px;border-bottom:1px solid rgba(11,29,58,0.07);background:linear-gradient(135deg,rgba(1,95,255,0.03) 0%,rgba(255,255,255,0) 60%);}
 .hero-label{font-size:10px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:#1FBFAB;margin-bottom:14px;display:flex;align-items:center;gap:7px;}
 .hero-label span{display:inline-block;width:20px;height:2px;background:linear-gradient(90deg,#FF68E9,#015FFF);border-radius:2px;}
@@ -51,9 +51,9 @@ body{font-family:'Plus Jakarta Sans',sans-serif;color:#0B1D3A;background:#f0f2f6
 .sprint-p{font-size:13px;color:#5C6E84;line-height:1.68;margin-bottom:20px;max-width:480px;}
 .sprint-btn{display:inline-flex;align-items:center;gap:8px;background:#015FFF;color:#fff;border-radius:9px;padding:11px 22px;font-size:12px;font-weight:600;text-decoration:none;}
 .sprint-stats{display:flex;margin-top:24px;border:1px solid rgba(11,29,58,0.08);border-radius:12px;overflow:hidden;background:#fff;}
-.stat{flex:1;padding:16px;text-align:center;}
-.stat-val{font-size:16px;font-weight:700;color:#0B1D3A;margin-bottom:3px;}
-.stat-label{font-size:9px;color:#9AAABB;letter-spacing:.05em;text-transform:uppercase;}
+.stat{flex:1;min-width:0;padding:20px 12px;text-align:center;}
+.stat-val{font-size:16px;font-weight:700;color:#0B1D3A;margin-bottom:4px;}
+.stat-label{font-size:9px;color:#9AAABB;letter-spacing:.05em;text-transform:uppercase;word-break:break-word;}
 .stat-mid{border-left:1px solid rgba(11,29,58,0.06);border-right:1px solid rgba(11,29,58,0.06);}
 .report-footer{background:#fff;height:90px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid rgba(11,29,58,0.06);position:relative;overflow:hidden;}
 .report-footer svg{position:absolute;inset:0;width:100%;height:100%;}
@@ -158,7 +158,7 @@ ${actionRows(actions,color)}
 <div class="report-header">
   <svg viewBox="0 0 780 90" xmlns="http://www.w3.org/2000/svg">${td}</svg>
   <div class="header-logo">blueconic</div>
-  <div class="header-meta">Acquisition Pressure Test &nbsp;·&nbsp; ${date}</div>
+  <div class="header-meta">Acquisition Pressure Test<br>${date}</div>
 </div>
 <div class="report-hero">
   <div class="hero-label"><span></span>Your acquisition diagnosis</div>
@@ -192,7 +192,6 @@ ${actionRows(actions,color)}
 </div>`;
 }
 
-// Read ?r= param and render
 const r=new URLSearchParams(window.location.search).get('r');
 const key=getPatternKey(r);
 if(key&&patterns[key]){
