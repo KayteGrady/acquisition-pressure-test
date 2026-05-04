@@ -28,7 +28,7 @@ body{font-family:var(--font);background:#fff;color:var(--navy);overflow-x:hidden
 .landing-headline .blue{color:var(--bc-blue);}
 .leak-wrap{display:inline-block;font-family:var(--script);font-style:italic;font-weight:600;font-size:1.12em;letter-spacing:-0.01em;cursor:default;overflow:visible;}
 .leak-letter{display:inline-block;transform:translateY(0);opacity:1;}
-.landing-sub{font-size:1.2rem;color:var(--text-secondary);line-height:1.75;margin-bottom:2rem;max-width:800px;margin-left:auto;margin-right:auto;white-space:nowrap;}
+.landing-sub{font-size:1.2rem;color:var(--text-secondary);line-height:1.75;margin-bottom:2rem;max-width:800px;margin-left:auto;margin-right:auto;}
 .divider{height:1px;background:rgba(11,29,58,0.1);max-width:320px;margin:0 auto 2rem;transform-origin:left;animation:drawLine .8s ease 1.4s both;}
 .cta-btn{display:inline-flex;align-items:center;gap:10px;background:var(--bc-blue);color:#fff;border:none;border-radius:12px;padding:1rem 2.5rem;font-family:var(--font);font-size:.975rem;font-weight:600;cursor:pointer;transition:transform .25s ease,box-shadow .25s ease;}
 .cta-btn:hover{transform:translateY(-3px);box-shadow:0 12px 32px rgba(1,95,255,.24);}
@@ -131,7 +131,6 @@ body{font-family:var(--font);background:#fff;color:var(--navy);overflow-x:hidden
 .modal-lock-icon{width:44px;height:44px;border-radius:50%;background:rgba(11,29,58,0.05);display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;}
 .modal-headline{font-size:1.2rem;font-weight:700;color:var(--navy);line-height:1.25;letter-spacing:-.02em;margin-bottom:.6rem;}
 .modal-sub{font-size:.82rem;color:var(--text-secondary);line-height:1.6;margin-bottom:1.25rem;max-width:280px;margin-left:auto;margin-right:auto;}
-/* Marketo form overrides */
 #mktoForm_1569{width:100%!important;}
 #mktoForm_1569 .mktoFormRow,#mktoForm_1569 .mktoFieldWrap,#mktoForm_1569 .mktoEmailField{width:100%!important;}
 #mktoForm_1569 input[type=email]{width:100%!important;border:1px solid rgba(11,29,58,0.14)!important;border-radius:10px!important;padding:.75rem 1rem!important;font-family:var(--font)!important;font-size:.9rem!important;color:var(--navy)!important;background:#fff!important;box-shadow:none!important;outline:none!important;margin-bottom:8px!important;}
@@ -145,6 +144,7 @@ body{font-family:var(--font);background:#fff;color:var(--navy);overflow-x:hidden
 @media(max-width:640px){
   .landing-body{padding:3rem 1.25rem 3.5rem;}
   .landing-headline{font-size:clamp(2.2rem,10vw,3rem);}
+  .landing-sub{font-size:.875rem;white-space:normal;overflow-wrap:break-word;}
   .cta-btn{padding:.875rem 2rem;font-size:.9rem;width:100%;justify-content:center;}
   .quiz-body{padding:1.25rem 1rem 3rem;}
   .answer-grid{grid-template-columns:1fr;gap:10px;}
@@ -499,7 +499,6 @@ function drawStaticDots(id){
 window.addEventListener('resize',()=>['landing-canvas','quiz-canvas','gate-canvas'].forEach(id=>{const c=document.getElementById(id);if(c&&c.parentElement.classList.contains('active')){id==='landing-canvas'?drawDots(id):drawStaticDots(id);}}));
 document.addEventListener('DOMContentLoaded',()=>{
   if(!checkResultsURL()){initLeakWord();requestAnimationFrame(()=>requestAnimationFrame(()=>drawDots('landing-canvas')));}
-  // Initialize Marketo — retry until MktoForms2 is available
   function initMktoForm(){
     if(typeof MktoForms2==='undefined'){setTimeout(initMktoForm,200);return;}
     MktoForms2.loadForm("//more.blueconic.com","358-XTM-616",1569,function(form){
@@ -534,93 +533,6 @@ document.addEventListener('DOMContentLoaded',()=>{
   }
   initMktoForm();
 });
-</script>
-
-<script>
-function generateReport(p,win){
-  const date=new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
-  function mkDots(isTop,count){
-    const W=780,H=90,dots=[];
-    const p0=[0,isTop?72:18],cp1=[W*.2,isTop?52:8],cp2=[W*.62,isTop?78:28],p3=[W,isTop?62:12];
-    function bpt(t){const mt=1-t,mt2=mt*mt,mt3=mt2*mt,t2=t*t,t3=t2*t;return{x:mt3*p0[0]+3*mt2*t*cp1[0]+3*mt*t2*cp2[0]+t3*p3[0],y:mt3*p0[1]+3*mt2*t*cp1[1]+3*mt*t2*cp2[1]+t3*p3[1]};}
-    function btan(t){const mt=1-t;const dx=3*(mt*mt*(cp1[0]-p0[0])+2*mt*t*(cp2[0]-cp1[0])+t*t*(p3[0]-cp2[0]));const dy=3*(mt*mt*(cp1[1]-p0[1])+2*mt*t*(cp2[1]-cp1[1])+t*t*(p3[1]-cp2[1]));const len=Math.sqrt(dx*dx+dy*dy)||1;return{tx:dx/len,ty:dy/len};}
-    for(let i=0;i<count;i++){
-      let t;if(Math.random()<.44){t=Math.random()<.5?Math.random()*.22:.78+Math.random()*.22;}else{t=.18+Math.random()*.64;}
-      const iO=t<.25||t>.75,iM=t>.35&&t<.65;
-      const sm=iO?42:(iM?14:26);const no=(Math.random()-.5)*2*sm;
-      const pt=bpt(t);const{tx,ty}=btan(t);const nx=-ty,ny=tx;
-      const x=pt.x+nx*no,y=pt.y+ny*no;
-      if(x<-4||x>W+4||y<-4||y>H+4)continue;
-      const r=iO?.9+Math.random()*1.6:.6+Math.random()*1.1;
-      const alpha=iO?.38+Math.random()*.36:.18+Math.random()*.22;
-      let col;if(t<.14)col=Math.random()<.5?'#FF68E9':'#F58AE8';else if(t<.28)col=Math.random()<.5?'#FF9F45':'#FFB347';else if(t<.42)col=Math.random()<.5?'#FFE04B':'#C8F56A';else if(t<.58)col=Math.random()<.5?'#0CC2FF':'#7FE7C1';else if(t<.74)col=Math.random()<.5?'#38BDF8':'#0CC2FF';else col=Math.random()<.5?'#8C78FF':'#6F8CFF';
-      dots.push(`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${r.toFixed(1)}" fill="${col}" opacity="${alpha.toFixed(2)}"/>`);
-    }
-    return dots.join('');
-  }
-  const td=mkDots(true,300),bd=mkDots(false,260);
-  const bHTML=(bullets,color)=>bullets.map(b=>`<li style="font-size:12px;color:#5C6E84;line-height:1.5;padding-left:14px;position:relative;margin-bottom:6px;"><span style="position:absolute;left:0;top:6px;width:5px;height:5px;border-radius:50%;background:${color};display:block;"></span>${b}</li>`).join('');
-  const aHTML=(actions,color)=>actions.map((a,i)=>`<div style="display:flex;align-items:flex-start;gap:12px;margin-bottom:10px;"><div style="width:20px;height:20px;min-width:20px;border-radius:50%;background:${color};color:#fff;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;">${i+1}</div><div style="font-size:12.5px;color:#5C6E84;line-height:1.58;">${a}</div></div>`).join('');
-  const cardHTML=(num,title,body,bullets,actions,play,playDesc,grad,color,bg)=>`
-<div style="border-radius:14px;padding:24px 28px;margin-bottom:14px;position:relative;overflow:hidden;border:1px solid rgba(11,29,58,0.08);background:${bg};">
-<div style="position:absolute;top:0;left:0;right:0;height:3px;background:${grad};"></div>
-<div style="font-size:9px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:${color};margin-bottom:8px;">${num}</div>
-<div style="font-size:18px;font-weight:700;line-height:1.25;letter-spacing:-.02em;margin-bottom:8px;">${title}</div>
-<div style="font-size:13px;color:#5C6E84;line-height:1.68;margin-bottom:16px;">${body}</div>
-<div style="border-radius:9px;padding:14px 16px;margin-bottom:16px;background:${color}0d;border:1px solid ${color}33;">
-<div style="font-size:8.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:${color};margin-bottom:8px;">The cost</div>
-<ul style="list-style:none;">${bHTML(bullets,color)}</ul>
-</div>
-<div style="font-size:8.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#9AAABB;margin-bottom:10px;margin-top:16px;">Three things to do this week</div>
-${aHTML(actions,color)}
-<div style="border-radius:9px;padding:14px 16px;margin-top:16px;background:${color}0a;border:1px solid ${color}22;">
-<div style="font-size:8.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:${color};margin-bottom:5px;">The BlueConic Growth Play that closes your leak</div>
-<div style="font-size:14px;font-weight:700;letter-spacing:-.015em;margin-bottom:6px;color:#0B1D3A;">${play}</div>
-<div style="font-size:12px;color:#5C6E84;line-height:1.62;">${playDesc}</div>
-</div>
-</div>`;
-
-  const html=`<!DOCTYPE html><html><head><meta charset="UTF-8"/><title>Your Acquisition Diagnosis — BlueConic</title>
-<style>@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Cormorant+Garamond:ital,wght@1,600&display=swap');*{box-sizing:border-box;margin:0;padding:0;}body{font-family:'Plus Jakarta Sans',sans-serif;color:#0B1D3A;background:#f0f2f6;padding:32px;-webkit-print-color-adjust:exact;print-color-adjust:exact;}.wrap{background:#fff;border-radius:20px;overflow:hidden;max-width:780px;margin:0 auto;box-shadow:0 8px 48px rgba(11,29,58,0.14);}@media print{body{background:#fff;padding:0;}.wrap{border-radius:0;box-shadow:none;max-width:100%;}@page{margin:10mm;size:A4;}}</style>
-</head><body><div class="wrap">
-<div style="background:#fff;height:90px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(11,29,58,0.06);position:relative;overflow:hidden;">
-<svg style="position:absolute;inset:0;width:100%;height:100%;" viewBox="0 0 780 90" xmlns="http://www.w3.org/2000/svg">${td}</svg>
-<div style="position:relative;z-index:2;padding-left:48px;font-family:'Plus Jakarta Sans',sans-serif;font-size:15px;font-weight:500;color:#0B1D3A;">blueconic</div>
-<div style="color:#9AAABB;font-size:11px;letter-spacing:.04em;position:relative;z-index:2;padding-right:48px;">Acquisition Pressure Test &nbsp;·&nbsp; ${date}</div>
-</div>
-<div style="padding:48px 48px 40px;border-bottom:1px solid rgba(11,29,58,0.07);background:linear-gradient(135deg,rgba(1,95,255,0.03) 0%,rgba(255,255,255,0) 60%);">
-<div style="font-size:10px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:#1FBFAB;margin-bottom:14px;display:flex;align-items:center;gap:7px;"><span style="display:inline-block;width:20px;height:2px;background:linear-gradient(90deg,#FF68E9,#015FFF);border-radius:2px;"></span>Your acquisition diagnosis</div>
-<h1 style="font-size:34px;font-weight:700;line-height:1.08;letter-spacing:-.03em;margin-bottom:10px;">Two leaks found.<br><em style="font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:600;color:#015FFF;">Here's what they're costing you.</em></h1>
-<p style="font-size:14px;color:#5C6E84;line-height:1.68;max-width:500px;">Based on your answers, we identified two leaks in your acquisition setup. This report names both, explains what each is costing you, and shows exactly how to fix them.</p>
-<div style="font-size:10px;color:#9AAABB;margin-top:18px;letter-spacing:.04em;">Generated ${date}</div>
-</div>
-<div style="padding:36px 48px;border-bottom:1px solid rgba(11,29,58,0.06);">
-<div style="font-size:9px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:#9AAABB;margin-bottom:20px;display:flex;align-items:center;gap:8px;">Your acquisition leaks<span style="flex:1;height:1px;background:rgba(11,29,58,0.07);display:block;"></span></div>
-${cardHTML('Leak 01',p.leak1Title,p.leak1Body,p.leak1CostBullets,p.leak1Actions,p.leak1Play,p.leak1PlayDesc,'linear-gradient(90deg,#015FFF,#0CC2FF,#7FE7C1)','#015FFF','linear-gradient(135deg,rgba(1,95,255,0.04) 0%,rgba(12,194,255,0.03) 100%)')}
-${cardHTML('Leak 02',p.leak2Title,p.leak2Body,p.leak2CostBullets,p.leak2Actions,p.leak2Play,p.leak2PlayDesc,'linear-gradient(90deg,#8C78FF,#FF68E9,#FF9F45)','#8C78FF','linear-gradient(135deg,rgba(140,120,255,0.05) 0%,rgba(255,104,233,0.03) 100%)')}
-</div>
-<div style="padding:36px 48px;background:linear-gradient(135deg,rgba(1,95,255,0.04) 0%,rgba(31,191,171,0.03) 100%);position:relative;">
-<div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#FF68E9,#FF9F45,#FFE04B,#7FE7C1,#0CC2FF,#8C78FF,#015FFF);"></div>
-<div style="font-size:9px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:#1FBFAB;margin-bottom:10px;">Next step</div>
-<div style="font-size:22px;font-weight:700;color:#0B1D3A;letter-spacing:-.02em;margin-bottom:10px;">Start with one sprint.</div>
-<div style="font-size:13px;color:#5C6E84;line-height:1.68;margin-bottom:20px;max-width:480px;">Run one Growth Play over 90 days, focused on a single leak in your funnel, built around your actual customer data. You'll work alongside a Forward Deployed Builder (yes, a real human!), designing and executing the play with you from start to finish with a clear, actionable metric at the end. No handoffs. No black box. Just a result you can evaluate and scale.</div>
-<a style="display:inline-flex;align-items:center;gap:8px;background:#015FFF;color:#fff;border-radius:9px;padding:11px 22px;font-size:12px;font-weight:600;text-decoration:none;" href="https://www.blueconic.com/request-demo">Talk to our team →</a>
-<div style="display:flex;margin-top:24px;border:1px solid rgba(11,29,58,0.08);border-radius:12px;overflow:hidden;background:#fff;">
-<div style="flex:1;padding:16px;text-align:center;"><div style="font-size:16px;font-weight:700;color:#0B1D3A;margin-bottom:3px;">90 days</div><div style="font-size:9px;color:#9AAABB;letter-spacing:.05em;text-transform:uppercase;">Duration</div></div>
-<div style="flex:1;padding:16px;text-align:center;border-left:1px solid rgba(11,29,58,0.06);border-right:1px solid rgba(11,29,58,0.06);"><div style="font-size:16px;font-weight:700;color:#0B1D3A;margin-bottom:3px;">1 Growth Play</div><div style="font-size:9px;color:#9AAABB;letter-spacing:.05em;text-transform:uppercase;">Scope</div></div>
-<div style="flex:1;padding:16px;text-align:center;"><div style="font-size:16px;font-weight:700;color:#0B1D3A;margin-bottom:3px;">$5k</div><div style="font-size:9px;color:#9AAABB;letter-spacing:.05em;text-transform:uppercase;">Investment</div></div>
-</div>
-</div>
-<div style="background:#fff;height:90px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid rgba(11,29,58,0.06);position:relative;overflow:hidden;">
-<svg style="position:absolute;inset:0;width:100%;height:100%;" viewBox="0 0 780 90" xmlns="http://www.w3.org/2000/svg">${bd}</svg>
-<div style="color:#5C6E84;font-size:11px;position:relative;z-index:2;padding-left:48px;">blueconic.com</div>
-<div style="display:flex;gap:10px;align-items:center;position:relative;z-index:2;padding-right:48px;">
-<button onclick="window.print()" style="background:#fff;color:#0B1D3A;border:1px solid rgba(11,29,58,0.15);border-radius:8px;padding:11px 18px;font-family:'Plus Jakarta Sans',sans-serif;font-size:12px;font-weight:600;cursor:pointer;">Save as PDF ↓</button>
-</div>
-</div>
-</div></body></html>`;
-  win.document.write(html);win.document.close();
-}
 </script>
 </body>
 </html>
